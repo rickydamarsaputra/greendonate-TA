@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { Text, ScrollView, Image } from 'react-native';
 
 export default function about() {
   return (

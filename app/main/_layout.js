@@ -42,11 +42,7 @@ export default () => {
       {/* MY DONATION ROUTE */}
       <Tabs.Screen name="my_donation"
         options={{
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} className="ml-4">
-              <Entypo name="chevron-thin-left" size={24} color="white" />
-            </TouchableOpacity>
-          ),
+          headerLeft: null,
           tabBarLabel: 'Donasi Saya',
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="donate" size={24} color={color} />
@@ -57,11 +53,7 @@ export default () => {
       {/* INBOX ROUTE */}
       <Tabs.Screen name="inbox"
         options={{
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} className="ml-4">
-              <Entypo name="chevron-thin-left" size={24} color="white" />
-            </TouchableOpacity>
-          ),
+          headerLeft: null,
           tabBarLabel: 'Inbox',
           tabBarIcon: ({ color }) => (
             <Octicons name="bell" size={24} color={color} />
@@ -72,11 +64,7 @@ export default () => {
       {/* ACCOUNT ROUTE */}
       <Tabs.Screen name="account"
         options={{
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => router.back()} className="ml-4">
-              <Entypo name="chevron-thin-left" size={24} color="white" />
-            </TouchableOpacity>
-          ),
+          headerLeft: null,
           tabBarLabel: 'Akun',
           tabBarIcon: ({ color }) => (
             <Feather name="user" size={24} color={color} />

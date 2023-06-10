@@ -1,9 +1,10 @@
-import { Link, Tabs } from 'expo-router';
-import { Octicons } from '@expo/vector-icons';
+import { Link, Tabs, useRouter } from 'expo-router';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { DonationCard, OrgCard, StoryCard } from '../../components';
 
 export default function main() {
+  const router = useRouter();
+
   const donations = [
     {
       id: 1,
@@ -86,10 +87,17 @@ export default function main() {
         options={{
           headerTitle: '',
           headerLeft: () => (
-            <Image source={require('../../assets/default-avatar.png')} className="w-10 h-10 bg-white rounded-full ml-4" />
+            <View className="items-start space-y-1 ml-4">
+              <Text className="font-medium text-white">Ricky Damar Saputra</Text>
+              <Text className="text-xs font-bold text-primary-500 bg-secondary-500 px-2 rounded-full">Donatur</Text>
+            </View>
+            // <View className="flex-row items-center space-x-2 ml-4">
+            //   <Text className="font-medium text-white">Ricky Damar Saputra</Text>
+            //   <Text className="text-xs font-bold text-primary-500 bg-secondary-500 px-2 rounded-full">Donatur</Text>
+            // </View>
           ),
           headerRight: () => (
-            <Text className="text-white mr-4">Ricky Damar Saputra</Text>
+            <Image source={require('../../assets/default-avatar.png')} className="w-10 h-10 bg-white rounded-full mr-4" />
           ),
         }}
       />
@@ -98,8 +106,10 @@ export default function main() {
         {/* LIST DONATION */}
         <View className="flex-row items-center justify-between">
           <Text className="text-lg text-primary-500 font-bold">Mulai Berbagi Kebaikan</Text>
-          <TouchableOpacity>
-            <Link href={''} className="text-xs text-gray-500">Lihat Lainnya</Link>
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: 'donations' })}
+          >
+            <Text className="text-xs text-gray-500">Lihat Lainnya</Text>
           </TouchableOpacity>
         </View>
         <ScrollView
@@ -115,8 +125,10 @@ export default function main() {
         {/* LIST ORGANIZATION */}
         <View className="flex-row items-center justify-between mt-10">
           <Text className="text-lg text-primary-500 font-bold">Organisasi Yang Terdaftar</Text>
-          <TouchableOpacity>
-            <Link href={''} className="text-xs text-gray-500">Lihat Lainnya</Link>
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: 'organization' })}
+          >
+            <Text className="text-xs text-gray-500">Lihat Lainnya</Text>
           </TouchableOpacity>
         </View>
         <ScrollView
@@ -132,12 +144,14 @@ export default function main() {
         {/* LIST STORY */}
         <View className="flex-row items-center justify-between mt-10">
           <Text className="text-lg text-primary-500 font-bold">Cerita Kawan Hijau</Text>
-          <TouchableOpacity>
-            <Link href={''} className="text-xs text-gray-500">Lihat Lainnya</Link>
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: 'stories' })}
+          >
+            <Text className="text-xs text-gray-500">Lihat Lainnya</Text>
           </TouchableOpacity>
         </View>
         <ScrollView
-          className="mt-2 mb-3"
+          className="mt-2 mb-5"
           showsHorizontalScrollIndicator={false}
         >
           <View style={{

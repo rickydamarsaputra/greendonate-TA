@@ -1,7 +1,8 @@
 import { Tabs } from 'expo-router';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { DonationCardFullWidth } from '../../components';
 
-export default function myDonation() {
+export default function donation() {
   const donations = [
     {
       id: 1,
@@ -48,10 +49,10 @@ export default function myDonation() {
   ];
 
   return (
-    <View className="flex-1 bg-white px-4">
+    <View className="relative flex-1 bg-gray-100 px-4">
       <Tabs.Screen
         options={{
-          headerTitle: 'Donasi Saya',
+          headerTitle: 'Mulai Berbagi Kebaikan',
         }}
       />
 
@@ -61,12 +62,7 @@ export default function myDonation() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 20 }}
       >
-        {donations.map((item) => (
-          <View key={item.id} className="bg-white shadow shadow-black/50 rounded-lg" >
-            <Image source={item.cover} className="w-full h-[120px] rounded-tl-lg rounded-tr-lg" style={{ resizeMode: 'cover' }} />
-            <Text className="text-sm p-2 text-primary-500 font-bold">{item.title}</Text>
-          </View>
-        ))}
+        {donations.map((item) => <DonationCardFullWidth key={item.id} item={item} />)}
       </ScrollView>
       {/* LIST DONATION */}
     </View>

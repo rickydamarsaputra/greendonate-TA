@@ -42,9 +42,9 @@ export default function index() {
 				renderItem={({ item }) => (
 					<ImageBackground source={item.image} className="relative flex-1 items-center justify-between w-screen">
 						<Text className="text-4xl font-bold text-primary-600 mt-20 z-50">GreenDonate</Text>
-						<View className="px-4 mb-10 z-50">
-							<Text className="px-4 text-lg text-white text-center font-semibold">{item.title}</Text>
-							<Text className="px-4 text-md text-white/80 text-center mt-2">{item.subtitle}</Text>
+						<View className="w-[90%] mb-10 z-50">
+							<Text className="text-lg text-white text-center font-semibold">{item.title}</Text>
+							<Text className="text-md text-white/80 text-center mt-2">{item.subtitle}</Text>
 							<View className="flex-row justify-center space-x-1 my-5">
 								{contents.map((_, index) => (
 									<View key={index} className={`${index == currentSlide ? 'w-5 bg-primary-600' : 'w-3 bg-secondary-600'} h-3 transition-all duration-300 rounded-full`}></View>

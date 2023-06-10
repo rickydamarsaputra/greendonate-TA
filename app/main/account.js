@@ -13,9 +13,15 @@ export default function account() {
         }}
       />
 
-      <ScrollView className="my-6 space-y-4">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="my-6 space-y-4"
+      >
         {/* SETTING */}
-        <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+          onPress={() => router.push({ pathname: 'setting' })}
+        >
           <View className="flex-row space-x-2 items-center">
             <FontAwesome name="gear" size={24} color="#4C5155" style={{ width: 30 }} />
             <Text className="font-medium text-gray-500">Pengaturan</Text>
@@ -25,7 +31,10 @@ export default function account() {
         {/* SETTING */}
 
         {/* SETTING ORGANIZATION */}
-        <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+          onPress={() => router.push({ pathname: 'org_setting' })}
+        >
           <View className="flex-row space-x-2 items-center">
             <Octicons name="organization" size={24} color="#4C5155" style={{ width: 30 }} />
             <Text className="font-medium text-gray-500">Pengaturan Organisasi</Text>
@@ -33,6 +42,18 @@ export default function account() {
           <AntDesign name="right" size={18} color="#4C5155" />
         </TouchableOpacity>
         {/* SETTING ORGANIZATION */}
+
+        {/* GREENDONATE STATISTICS */}
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+          onPress={() => router.push({ pathname: 'statistics' })}>
+          <View className="flex-row space-x-2 items-center">
+            <FontAwesome name="bar-chart-o" size={24} color="#4C5155" style={{ width: 30 }} />
+            <Text className="font-medium text-gray-500">Statistika Greendonate</Text>
+          </View>
+          <AntDesign name="right" size={18} color="#4C5155" />
+        </TouchableOpacity>
+        {/* GREENDONATE STATISTICS */}
 
         {/* MANAGE USERS */}
         <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
@@ -45,7 +66,10 @@ export default function account() {
         {/* MANAGE USERS */}
 
         {/* RAISE DONATIONS */}
-        <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+          onPress={() => router.push({ pathname: 'raise_donation' })}
+        >
           <View className="flex-row space-x-2 items-center">
             <MaterialCommunityIcons name="hand-coin" size={24} color="#4C5155" style={{ width: 30 }} />
             <Text className="font-medium text-gray-500">Galang Donasi</Text>

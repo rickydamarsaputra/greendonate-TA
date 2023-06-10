@@ -1,7 +1,7 @@
 import { Tabs } from 'expo-router';
-import { View, Text, ScrollView, Image } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
-export default function myDonation() {
+export default function raiseDonation() {
   const donations = [
     {
       id: 1,
@@ -48,10 +48,10 @@ export default function myDonation() {
   ];
 
   return (
-    <View className="flex-1 bg-white px-4">
+    <View className="relative flex-1 bg-gray-100 px-4">
       <Tabs.Screen
         options={{
-          headerTitle: 'Donasi Saya',
+          headerTitle: 'Galang Donasi',
         }}
       />
 
@@ -69,6 +69,10 @@ export default function myDonation() {
         ))}
       </ScrollView>
       {/* LIST DONATION */}
+
+      <TouchableOpacity className="w-1/2 absolute self-center bottom-5 py-4 rounded-md bg-primary-600 mb-2">
+        <Text className="text-md text-white text-center font-semibold">Buat Donasi</Text>
+      </TouchableOpacity>
     </View>
   );
 }
