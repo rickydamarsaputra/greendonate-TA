@@ -32,6 +32,7 @@ export default function index() {
 
 			<FlatList
 				horizontal
+				showsHorizontalScrollIndicator={false}
 				pagingEnabled
 				data={contents}
 				onScroll={(e) => {
@@ -54,7 +55,7 @@ export default function index() {
 								<Link href={{ pathname: 'login' }} className="text-md text-white text-center font-semibold">Mulai berdonasi!</Link>
 							</TouchableOpacity>
 							<TouchableOpacity className="py-4 rounded-md bg-secondary-600">
-								<Text className="text-md text-primary-600 text-center font-semibold">Ingin membuka donasi?</Text>
+								<Link href={{ pathname: 'main' }} className="text-md text-primary-600 text-center font-semibold">Ingin membuka donasi?</Link>
 							</TouchableOpacity>
 						</View>
 						<View className="absolute top-0 right-0 bottom-0 left-0 bg-black/50" />

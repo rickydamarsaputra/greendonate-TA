@@ -18,8 +18,7 @@ export default () => {
         )
       }}
     >
-      <Stack.Screen name="index" />
-      <Stack.Screen name="(auth)/login" />
+      <Stack.Screen name="main" options={{ headerShown: false }} />
     </Stack>
   );
 };
