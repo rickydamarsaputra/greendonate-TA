@@ -1,9 +1,30 @@
 import { Link, Tabs, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { DonationCard, OrgCard, StoryCard } from '../../components';
+import supabase from '../../lib/supabase';
 
 export default function main() {
   const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function getUser() {
+      const currentUserLogin = await supabase.auth.getUser();
+      if (currentUserLogin.error) return router.replace({ pathname: '/' });
+
+      const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
+      if (error) return console.log(error);
+
+      setUser({
+        fullname: data.fullname,
+        role: data.role,
+        avatar_img: data.avatar_img,
+      });
+    }
+
+    getUser();
+  }, []);
 
   const donations = [
     {
@@ -88,8 +109,10 @@ export default function main() {
           headerTitle: '',
           headerLeft: () => (
             <View className="items-start space-y-1 ml-4">
-              <Text className="font-medium text-white">Ricky Damar Saputra</Text>
-              <Text className="text-xs font-bold text-primary-500 bg-secondary-500 px-2 rounded-full">Donatur</Text>
+              <Text className="font-medium capitalize text-white">{user?.fullname}</Text>
+              <Text className="text-xs capitalize font-bold text-primary-500 bg-secondary-500 px-2 rounded-full">
+                {user?.role}
+              </Text>
             </View>
             // <View className="flex-row items-center space-x-2 ml-4">
             //   <Text className="font-medium text-white">Ricky Damar Saputra</Text>
@@ -97,7 +120,7 @@ export default function main() {
             // </View>
           ),
           headerRight: () => (
-            <Image source={require('../../assets/default-avatar.png')} className="w-10 h-10 bg-white rounded-full mr-4" />
+            <Image source={{ uri: user?.avatar_img }} className="w-10 h-10 bg-white rounded-full mr-4" />
           ),
         }}
       />

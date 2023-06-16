@@ -1,9 +1,17 @@
 import { Tabs, useRouter } from 'expo-router';
 import { FontAwesome, AntDesign, FontAwesome5, MaterialIcons, Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import supabase from '../../lib/supabase';
 
 export default function account() {
   const router = useRouter();
+
+  const handleSignOut = async () => {
+    const userSignOut = await supabase.auth.signOut();
+    if (userSignOut.error) return console.log(userSignOut.error);
+
+    router.replace({ pathname: '/' });
+  }
 
   return (
     <View className="flex-1 bg-gray-100 px-4">
@@ -105,7 +113,10 @@ export default function account() {
         {/* TERMS AND CONDITIONS */}
 
         {/* LOG OUT */}
-        <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+          onPress={handleSignOut}
+        >
           <View className="flex-row space-x-2 items-center">
             <FontAwesome name="sign-out" size={24} color="#4C5155" style={{ width: 30 }} />
             <Text className="font-medium text-gray-500">Keluar</Text>
