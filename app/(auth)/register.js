@@ -1,4 +1,4 @@
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Entypo, Octicons } from '@expo/vector-icons';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
@@ -12,6 +12,7 @@ import slug from 'slug';
 
 export default function register() {
   const router = useRouter();
+  const { enterAs } = useLocalSearchParams();
   const [securePassword, setSecurePassword] = useState(true);
   const [image, setImage] = useState(null);
 
@@ -40,11 +41,12 @@ export default function register() {
       address: values.address,
       contact: values.phone_number,
       contact: values.phone_number,
-      role: 'donatur',
+      role: enterAs,
       is_active: true,
     }]);
     if (user.error) return console.log(user.error);
 
+    if (enterAs == 'organization') return router.replace({ pathname: 'org_register' });
     router.replace({ pathname: 'main' });
   }
 

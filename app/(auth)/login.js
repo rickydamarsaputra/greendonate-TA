@@ -1,4 +1,4 @@
-import { Link, Stack, useRouter } from 'expo-router';
+import { Link, Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Entypo } from '@expo/vector-icons';
 import { Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
@@ -9,6 +9,7 @@ import ErrorInputMessage from '../../components/ErrorInputMessage';
 
 export default function login() {
   const router = useRouter();
+  const { enterAs } = useLocalSearchParams();
   const [securePassword, setSecurePassword] = useState(true);
 
   const handleLogin = async (values) => {
@@ -63,7 +64,7 @@ export default function login() {
             </TouchableOpacity>
             <View className="flex-row justify-center mt-2 space-x-1">
               <Text className="text-gray-500 font-medium">Belum punya akun?</Text>
-              <Link href={{ pathname: 'register' }} className="text-primary-500 font-medium">Daftar</Link>
+              <Link href={{ pathname: 'register', params: { enterAs } }} className="text-primary-500 font-medium">Daftar</Link>
             </View>
           </View>
         )}

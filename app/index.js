@@ -52,10 +52,10 @@ export default function index() {
 							</View>
 							<TouchableOpacity
 								className="py-4 rounded-md bg-primary-600 mb-2">
-								<Link href={{ pathname: 'login' }} className="text-md text-white text-center font-semibold">Mulai berdonasi!</Link>
+								<Link href={{ pathname: 'login', params: { enterAs: 'donatur' } }} className="text-md text-white text-center font-semibold">Mulai berdonasi!</Link>
 							</TouchableOpacity>
 							<TouchableOpacity className="py-4 rounded-md bg-secondary-600">
-								<Link href={{ pathname: 'main' }} className="text-md text-primary-600 text-center font-semibold">Ingin membuka donasi?</Link>
+								<Link href={{ pathname: 'login', params: { enterAs: 'organization' } }} className="text-md text-primary-600 text-center font-semibold">Ingin membuka donasi?</Link>
 							</TouchableOpacity>
 						</View>
 						<View className="absolute top-0 right-0 bottom-0 left-0 bg-black/50" />

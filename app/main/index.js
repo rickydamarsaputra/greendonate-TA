@@ -7,24 +7,8 @@ import supabase from '../../lib/supabase';
 export default function main() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [organization, setOrganization] = useState([]);
 
-  useEffect(() => {
-    async function getUser() {
-      const currentUserLogin = await supabase.auth.getUser();
-      if (currentUserLogin.error) return router.replace({ pathname: '/' });
-
-      const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
-      if (error) return console.log(error);
-
-      setUser({
-        fullname: data.fullname,
-        role: data.role,
-        avatar_img: data.avatar_img,
-      });
-    }
-
-    getUser();
-  }, []);
 
   const donations = [
     {
@@ -57,23 +41,23 @@ export default function main() {
     }
   ];
 
-  const organization = [
-    {
-      id: 1,
-      title: 'PMI Surabaya',
-      cover: require('../../assets/default-banner.png'),
-    },
-    {
-      id: 2,
-      title: 'Rumah Zakat',
-      cover: require('../../assets/default-banner.png'),
-    },
-    {
-      id: 3,
-      title: 'Cinta Dakwah Indonesia',
-      cover: require('../../assets/default-banner.png'),
-    },
-  ];
+  // const organization = [
+  //   {
+  //     id: 1,
+  //     title: 'PMI Surabaya',
+  //     cover: require('../../assets/default-banner.png'),
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Rumah Zakat',
+  //     cover: require('../../assets/default-banner.png'),
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Cinta Dakwah Indonesia',
+  //     cover: require('../../assets/default-banner.png'),
+  //   },
+  // ];
 
   const stories = [
     {
@@ -101,6 +85,36 @@ export default function main() {
       created_at: '2 menit yang lalu',
     },
   ];
+
+  useEffect(() => {
+    async function getUser() {
+      const currentUserLogin = await supabase.auth.getUser();
+      if (currentUserLogin.error) return router.replace({ pathname: '/' });
+
+      const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
+      if (error) return console.log(error);
+
+      setUser({
+        fullname: data.fullname,
+        role: data.role,
+        avatar_img: data.avatar_img,
+      });
+    }
+
+    async function getOrganization() {
+      const { data, error } = await supabase.from('organizations').select(`id, name, banner_img`);
+      if (error) return console.log(error.message);
+
+      setOrganization([...data.map((res) => ({
+        id: res.id,
+        title: res.name,
+        cover: res.banner_img
+      }))]);
+    }
+
+    getUser();
+    getOrganization();
+  }, []);
 
   return (
     <View className="flex-1 bg-gray-100">
