@@ -175,7 +175,7 @@ export default function main() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ gap: 10 }}
         >
-          {donations.map((item) => <DonationCard key={item.id} item={item} />)}
+          {donations?.map((item) => <DonationCard key={item.id} item={item} />)}
         </ScrollView>
         {/* LIST DONATION */}
 
@@ -194,7 +194,7 @@ export default function main() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ gap: 10 }}
         >
-          {organization.map((item) => <OrgCard key={item.id} item={item} />)}
+          {organization?.map((item) => <OrgCard key={item.id} item={item} />)}
         </ScrollView>
         {/* LIST ORGANIZATION */}
 
@@ -217,7 +217,7 @@ export default function main() {
             flexWrap: 'wrap',
             justifyContent: 'space-between',
           }}>
-            {stories.map((item) => <StoryCard key={item.id} item={item} />)}
+            {stories?.map((item) => <StoryCard key={item.id} item={item} />)}
           </View>
         </ScrollView>
         {/* LIST STORY */}

@@ -167,7 +167,9 @@ export default function orgSetting() {
               <TextInput
                 onChangeText={handleChange('desc')}
                 value={values.desc}
-                className="border-b border-gray-500" placeholder="Masukkan deskripsi organisasi" />
+                style={{ height: 100, textAlignVertical: 'top' }}
+                multiline={true}
+                className="border-b border-gray-500 mt-1" placeholder="Masukkan deskripsi organisasi" />
               {errors.desc && touched.desc ? <ErrorInputMessage message={errors.desc} /> : null}
             </View>
             <TouchableOpacity

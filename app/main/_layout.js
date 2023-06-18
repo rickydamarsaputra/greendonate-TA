@@ -33,7 +33,6 @@ export default () => {
       const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
       if (error) return console.log(error);
 
-      console.log(data.role);
       setUser({
         role: data.role,
       });
