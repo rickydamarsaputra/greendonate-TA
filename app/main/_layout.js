@@ -1,9 +1,46 @@
 import { Tabs, useRouter } from "expo-router";
 import { Entypo, Octicons, FontAwesome5, Feather } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
+import { useEffect, useMemo, useState } from "react";
+import supabase from "../../lib/supabase";
 
 export default () => {
   const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  // useEffect(() => {
+  //   async function getUser() {
+  //     const currentUserLogin = await supabase.auth.getUser();
+  //     if (currentUserLogin.error) return router.replace({ pathname: '/' });
+
+  //     const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
+  //     if (error) return console.log(error);
+
+  //     console.log(data.role);
+  //     setUser({
+  //       role: data.role,
+  //     });
+  //   }
+
+  //   getUser();
+  // }, []);
+
+  useMemo(() => {
+    async function getUser() {
+      const currentUserLogin = await supabase.auth.getUser();
+      if (currentUserLogin.error) return router.replace({ pathname: '/' });
+
+      const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
+      if (error) return console.log(error);
+
+      console.log(data.role);
+      setUser({
+        role: data.role,
+      });
+    }
+
+    getUser();
+  }, []);
 
   return (
     <Tabs
@@ -40,15 +77,28 @@ export default () => {
       />
 
       {/* MY DONATION ROUTE */}
-      <Tabs.Screen name="my_donation"
-        options={{
-          headerLeft: null,
-          tabBarLabel: 'Donasi Saya',
-          tabBarIcon: ({ color }) => (
-            <FontAwesome5 name="donate" size={24} color={color} />
-          ),
-        }}
-      />
+      {(user?.role == 'admin' || user?.role == 'organization') ? (
+        <Tabs.Screen name="my_donation"
+          options={{
+            headerLeft: null,
+            tabBarLabel: 'Donasi Saya',
+            tabBarButton: () => null,
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5 name="donate" size={24} color={color} />
+            ),
+          }}
+        />
+      ) : (
+        <Tabs.Screen name="my_donation"
+          options={{
+            headerLeft: null,
+            tabBarLabel: 'Donasi Saya',
+            tabBarIcon: ({ color }) => (
+              <FontAwesome5 name="donate" size={24} color={color} />
+            ),
+          }}
+        />
+      )}
 
       {/* INBOX ROUTE */}
       <Tabs.Screen name="inbox"

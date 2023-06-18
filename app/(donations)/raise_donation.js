@@ -65,7 +65,7 @@ export default function raiseDonation() {
 
       const { data, error } = await supabase.from('donation_posts')
         .select()
-        .eq('organization_id', user.data.organization_id);
+        .eq('organization_id', user.data.organization_id).order('created_at', { ascending: false });
       if (error) return console.log(error);
 
       setDonations([...data.map((res) => ({

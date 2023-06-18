@@ -112,6 +112,7 @@ export default function orgRegister() {
               <TextInput
                 onChangeText={handleChange('contact')}
                 value={values.contact}
+                keyboardType="numeric"
                 className="border-b border-gray-500" placeholder="Masukkan nomor organisasi" />
               {errors.contact && touched.contact ? <ErrorInputMessage message={errors.contact} /> : null}
             </View>

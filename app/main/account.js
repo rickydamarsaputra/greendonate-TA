@@ -73,25 +73,29 @@ export default function account() {
         {/* SETTING ORGANIZATION */}
 
         {/* GREENDONATE STATISTICS */}
-        <TouchableOpacity
-          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
-          onPress={() => router.push({ pathname: 'statistics' })}>
-          <View className="flex-row space-x-2 items-center">
-            <FontAwesome name="bar-chart-o" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Statistika Greendonate</Text>
-          </View>
-          <AntDesign name="right" size={18} color="#4C5155" />
-        </TouchableOpacity>
+        {user?.role == 'admin' && (
+          <TouchableOpacity
+            className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+            onPress={() => router.push({ pathname: 'statistics' })}>
+            <View className="flex-row space-x-2 items-center">
+              <FontAwesome name="bar-chart-o" size={24} color="#4C5155" style={{ width: 30 }} />
+              <Text className="font-medium text-gray-500">Statistika Greendonate</Text>
+            </View>
+            <AntDesign name="right" size={18} color="#4C5155" />
+          </TouchableOpacity>
+        )}
         {/* GREENDONATE STATISTICS */}
 
         {/* MANAGE USERS */}
-        <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
-          <View className="flex-row space-x-2 items-center">
-            <FontAwesome5 name="users-cog" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Kelola Pengguna</Text>
-          </View>
-          <AntDesign name="right" size={18} color="#4C5155" />
-        </TouchableOpacity>
+        {user?.role == 'admin' && (
+          <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
+            <View className="flex-row space-x-2 items-center">
+              <FontAwesome5 name="users-cog" size={24} color="#4C5155" style={{ width: 30 }} />
+              <Text className="font-medium text-gray-500">Kelola Pengguna</Text>
+            </View>
+            <AntDesign name="right" size={18} color="#4C5155" />
+          </TouchableOpacity>
+        )}
         {/* MANAGE USERS */}
 
         {/* RAISE DONATIONS */}

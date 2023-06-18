@@ -40,7 +40,6 @@ export default function register() {
       fullname: values.fullname,
       address: values.address,
       contact: values.phone_number,
-      contact: values.phone_number,
       role: enterAs,
       is_active: true,
     }]);
@@ -119,6 +118,7 @@ export default function register() {
               <TextInput
                 onChangeText={handleChange('phone_number')}
                 value={values.phone_number}
+                keyboardType="numeric"
                 className="border-b border-gray-500" placeholder="Masukkan nomor hp anda" />
               {errors.phone_number && touched.phone_number ? <ErrorInputMessage message={errors.phone_number} /> : null}
             </View>
