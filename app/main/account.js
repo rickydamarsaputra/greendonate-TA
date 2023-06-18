@@ -2,9 +2,11 @@ import { Tabs, useRouter } from 'expo-router';
 import { FontAwesome, AntDesign, FontAwesome5, MaterialIcons, Octicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import supabase from '../../lib/supabase';
+import { useEffect, useState } from 'react';
 
 export default function account() {
   const router = useRouter();
+  const [user, setUser] = useState(null);
 
   const handleSignOut = async () => {
     const userSignOut = await supabase.auth.signOut();
@@ -12,6 +14,23 @@ export default function account() {
 
     router.replace({ pathname: '/' });
   }
+
+  useEffect(() => {
+    async function getUser() {
+      const currentUserLogin = await supabase.auth.getUser();
+      if (currentUserLogin.error) return router.replace({ pathname: '/' });
+
+      const { data, error } = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
+      if (error) return console.log(error);
+
+      setUser({
+        fullname: data.fullname,
+        role: data.role,
+      });
+    }
+
+    getUser();
+  }, []);
 
   return (
     <View className="flex-1 bg-gray-100 px-4">
@@ -39,16 +58,18 @@ export default function account() {
         {/* SETTING */}
 
         {/* SETTING ORGANIZATION */}
-        <TouchableOpacity
-          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
-          onPress={() => router.push({ pathname: 'org_setting' })}
-        >
-          <View className="flex-row space-x-2 items-center">
-            <Octicons name="organization" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Pengaturan Organisasi</Text>
-          </View>
-          <AntDesign name="right" size={18} color="#4C5155" />
-        </TouchableOpacity>
+        {user?.role == 'organization' && (
+          <TouchableOpacity
+            className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+            onPress={() => router.push({ pathname: 'org_setting' })}
+          >
+            <View className="flex-row space-x-2 items-center">
+              <Octicons name="organization" size={24} color="#4C5155" style={{ width: 30 }} />
+              <Text className="font-medium text-gray-500">Pengaturan Organisasi</Text>
+            </View>
+            <AntDesign name="right" size={18} color="#4C5155" />
+          </TouchableOpacity>
+        )}
         {/* SETTING ORGANIZATION */}
 
         {/* GREENDONATE STATISTICS */}
@@ -74,16 +95,18 @@ export default function account() {
         {/* MANAGE USERS */}
 
         {/* RAISE DONATIONS */}
-        <TouchableOpacity
-          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
-          onPress={() => router.push({ pathname: 'raise_donation' })}
-        >
-          <View className="flex-row space-x-2 items-center">
-            <MaterialCommunityIcons name="hand-coin" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Galang Donasi</Text>
-          </View>
-          <AntDesign name="right" size={18} color="#4C5155" />
-        </TouchableOpacity>
+        {user?.role == 'organization' && (
+          <TouchableOpacity
+            className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+            onPress={() => router.push({ pathname: 'raise_donation' })}
+          >
+            <View className="flex-row space-x-2 items-center">
+              <MaterialCommunityIcons name="hand-coin" size={24} color="#4C5155" style={{ width: 30 }} />
+              <Text className="font-medium text-gray-500">Galang Donasi</Text>
+            </View>
+            <AntDesign name="right" size={18} color="#4C5155" />
+          </TouchableOpacity>
+        )}
         {/* RAISE DONATIONS */}
 
         {/* ABOUT */}

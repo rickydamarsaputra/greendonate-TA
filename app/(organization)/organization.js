@@ -42,7 +42,9 @@ export default function organization() {
 
   useEffect(() => {
     async function getOrganization() {
-      const { data, error } = await supabase.from('organizations').select(`id, name, banner_img`);
+      const { data, error } = await supabase.from('organizations')
+        .select(`id, name, banner_img`)
+        .order('created_at', { ascending: false });
       if (error) return console.log(error.message);
 
       setOrganization([...data.map((res) => ({

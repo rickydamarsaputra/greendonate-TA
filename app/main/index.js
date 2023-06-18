@@ -7,39 +7,40 @@ import supabase from '../../lib/supabase';
 export default function main() {
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [donations, setDonations] = useState([]);
   const [organization, setOrganization] = useState([]);
 
 
-  const donations = [
-    {
-      id: 1,
-      title: 'Sedekah untuk bencana Tsunami di aceh',
-      current_amount: 10,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berlangsung',
-    },
-    {
-      id: 2,
-      title: 'Bencana gunung berapi di jawa timur',
-      current_amount: 20,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berakhir',
-    },
-    {
-      id: 3,
-      title: 'Sedekah untuk bencana Tsunami di aceh',
-      current_amount: 10,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berlangsung',
-    },
-    {
-      id: 4,
-      title: 'Bencana gunung berapi di jawa timur',
-      current_amount: 20,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berakhir',
-    }
-  ];
+  // const donations = [
+  //   {
+  //     id: 1,
+  //     title: 'Sedekah untuk bencana Tsunami di aceh',
+  //     current_amount: 10,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berlangsung',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Bencana gunung berapi di jawa timur',
+  //     current_amount: 20,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berakhir',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Sedekah untuk bencana Tsunami di aceh',
+  //     current_amount: 10,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berlangsung',
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'Bencana gunung berapi di jawa timur',
+  //     current_amount: 20,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berakhir',
+  //   }
+  // ];
 
   // const organization = [
   //   {
@@ -101,8 +102,26 @@ export default function main() {
       });
     }
 
+    async function getDonations() {
+      const { data, error } = await supabase.from('donation_posts')
+        .select(`id, name, banner_img, current_amount, status`)
+        .limit(4)
+        .order('created_at', { ascending: false });
+      if (error) return console.log(error.message);
+
+      setDonations([...data.map((res) => ({
+        id: res.id,
+        title: res.name,
+        current_amount: res.current_amount,
+        cover: res.banner_img,
+        status: res.status
+      }))]);
+    }
+
     async function getOrganization() {
-      const { data, error } = await supabase.from('organizations').select(`id, name, banner_img`);
+      const { data, error } = await supabase.from('organizations')
+        .select(`id, name, banner_img`)
+        .order('created_at', { ascending: false });
       if (error) return console.log(error.message);
 
       setOrganization([...data.map((res) => ({
@@ -114,6 +133,7 @@ export default function main() {
 
     getUser();
     getOrganization();
+    getDonations();
   }, []);
 
   return (

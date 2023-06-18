@@ -1,52 +1,74 @@
 import { Tabs } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { DonationCardFullWidth } from '../../components';
+import supabase from '../../lib/supabase';
 
 export default function donation() {
-  const donations = [
-    {
-      id: 1,
-      title: 'Sedekah untuk bencana Tsunami di aceh',
-      current_amount: 10,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berlangsung',
-    },
-    {
-      id: 2,
-      title: 'Bencana gunung berapi di jawa timur',
-      current_amount: 20,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berakhir',
-    },
-    {
-      id: 3,
-      title: 'Sedekah untuk bencana Tsunami di aceh',
-      current_amount: 10,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berlangsung',
-    },
-    {
-      id: 4,
-      title: 'Bencana gunung berapi di jawa timur',
-      current_amount: 20,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berakhir',
-    },
-    {
-      id: 5,
-      title: 'Sedekah untuk bencana Tsunami di aceh',
-      current_amount: 10,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berlangsung',
-    },
-    {
-      id: 6,
-      title: 'Bencana gunung berapi di jawa timur',
-      current_amount: 20,
-      cover: require('../../assets/default-banner.png'),
-      status: 'Berakhir',
+  const [donations, setDonations] = useState([]);
+  // const donations = [
+  //   {
+  //     id: 1,
+  //     title: 'Sedekah untuk bencana Tsunami di aceh',
+  //     current_amount: 10,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berlangsung',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Bencana gunung berapi di jawa timur',
+  //     current_amount: 20,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berakhir',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Sedekah untuk bencana Tsunami di aceh',
+  //     current_amount: 10,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berlangsung',
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'Bencana gunung berapi di jawa timur',
+  //     current_amount: 20,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berakhir',
+  //   },
+  //   {
+  //     id: 5,
+  //     title: 'Sedekah untuk bencana Tsunami di aceh',
+  //     current_amount: 10,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berlangsung',
+  //   },
+  //   {
+  //     id: 6,
+  //     title: 'Bencana gunung berapi di jawa timur',
+  //     current_amount: 20,
+  //     cover: require('../../assets/default-banner.png'),
+  //     status: 'Berakhir',
+  //   }
+  // ];
+
+  useEffect(() => {
+    async function getDonations() {
+      const { data, error } = await supabase.from('donation_posts')
+        .select(`id, name, banner_img, current_amount, status`)
+        .order('created_at', { ascending: false });
+      if (error) return console.log(error.message);
+
+      setDonations([...data.map((res) => ({
+        id: res.id,
+        title: res.name,
+        current_amount: res.current_amount,
+        cover: res.banner_img,
+        status: res.status
+      }))]);
     }
-  ];
+
+    getDonations();
+  }, []);
 
   return (
     <View className="relative flex-1 bg-gray-100 px-4">

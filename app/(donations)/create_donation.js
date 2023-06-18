@@ -1,21 +1,21 @@
 import { Octicons } from '@expo/vector-icons';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Formik } from 'formik';
-import OrgRegisterYupSchema from '../../schema/OrgRegisterYupSchema';
 import ErrorInputMessage from '../../components/ErrorInputMessage';
 import supabase from '../../lib/supabase';
 import slug from 'slug';
 import { decode } from 'base64-arraybuffer';
+import CreateDonationPostYupSchema from '../../schema/CreateDonationPostYupSchema';
 
-export default function orgRegister() {
-  const [image, setImage] = useState(null);
+export default function createDonation() {
   const router = useRouter();
+  const [image, setImage] = useState(null);
 
-  const handleRegister = async (values) => {
-    const storage = await supabase.storage.from('public').upload(`org_banner/${slug(values.name, '_')}.png`, decode(image.base64), {
+  const handleCreateDonationPost = async (values) => {
+    const storage = await supabase.storage.from('public').upload(`donation_banner/${slug(values.name, '_')}.png`, decode(image.base64), {
       cacheControl: '3600',
       upsert: false,
       contentType: 'image/png',
@@ -25,23 +25,26 @@ export default function orgRegister() {
     const storageGetUrl = await supabase.storage.from('public').getPublicUrl(storage.data.path);
     if (storageGetUrl.error) return console.log(storageGetUrl.error);
 
-    const organization = await supabase.from('organizations').insert({
-      name: values.name,
-      address: values.address,
-      contact: values.contact,
-      desc: values.desc,
-      banner_img: storageGetUrl.data.publicUrl,
-    }).select().single();
-    if (organization.error) return console.log(organization.error);
-
     const currentUserLogin = await supabase.auth.getUser();
+    if (currentUserLogin.error) return console.log(currentUserLogin.error);
 
-    const updateUser = await supabase.from('users')
-      .update({ organization_id: organization.data.id })
-      .eq('id', currentUserLogin.data.user.id)
+    const user = await supabase.from('users')
       .select()
-    if (updateUser.error) return console.log(updateUser.error);
-    router.replace({ pathname: 'main' });
+      .eq('id', currentUserLogin.data.user.id)
+      .single();
+    if (user.error) return console.log(user.error);
+
+    const donationPost = await supabase.from('donation_posts').insert({
+      organization_id: user.data.organization_id,
+      name: values.name,
+      desc: values.desc,
+      required_amount: values.required_amount,
+      goods_criteria: values.goods_criteria,
+      banner_img: storageGetUrl.data.publicUrl,
+    });
+    if (donationPost.error) return console.log(donationPost.error);
+
+    router.push({ pathname: 'raise_donation' });
   }
 
   const pickImage = async () => {
@@ -64,21 +67,20 @@ export default function orgRegister() {
 
   return (
     <View className="flex-1 px-4">
-      <Stack.Screen options={{ headerTitle: 'Daftarkan Organisasi Anda' }} />
-      <Text className="text-xl font-bold text-gray-800 mt-5">Mulai donasi untuk kurangi limbah dengan Zero Waste</Text>
+      <Stack.Screen options={{ headerTitle: 'Buat Donasi' }} />
       <Formik
-        validationSchema={OrgRegisterYupSchema}
+        validationSchema={CreateDonationPostYupSchema}
         initialValues={{
           name: '',
-          address: '',
-          contact: '',
           desc: '',
+          required_amount: '',
+          goods_criteria: '',
         }}
-        onSubmit={handleRegister}
+        onSubmit={handleCreateDonationPost}
       >
         {({ handleChange, handleSubmit, values, errors, touched }) => (
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View className="relative mt-2">
+            <View className="relative mt-5">
               <Image
                 source={!image ? require('../../assets/v2/default-asset.png') : { uri: image.uri }}
                 className="w-full h-[200px] rounded-lg"
@@ -96,32 +98,33 @@ export default function orgRegister() {
               <TextInput
                 onChangeText={handleChange('name')}
                 value={values.name}
-                className="border-b border-gray-500" placeholder="Masukkan nama organisasi" />
+                className="border-b border-gray-500" placeholder="Masukkan nama" />
               {errors.name && touched.name ? <ErrorInputMessage message={errors.name} /> : null}
-            </View>
-            <View className="mt-4">
-              <Text className="text-gray-500">Alamat</Text>
-              <TextInput
-                onChangeText={handleChange('address')}
-                value={values.address}
-                className="border-b border-gray-500" placeholder="Masukkan alamat organisasi" />
-              {errors.address && touched.address ? <ErrorInputMessage message={errors.address} /> : null}
-            </View>
-            <View className="mt-4">
-              <Text className="text-gray-500">Kontak</Text>
-              <TextInput
-                onChangeText={handleChange('contact')}
-                value={values.contact}
-                className="border-b border-gray-500" placeholder="Masukkan nomor organisasi" />
-              {errors.contact && touched.contact ? <ErrorInputMessage message={errors.contact} /> : null}
             </View>
             <View className="mt-4">
               <Text className="text-gray-500">Deskripsi</Text>
               <TextInput
                 onChangeText={handleChange('desc')}
                 value={values.desc}
-                className="border-b border-gray-500" placeholder="Masukkan deskripsi organisasi" />
+                className="border-b border-gray-500" placeholder="Masukkan deskripsi" />
               {errors.desc && touched.desc ? <ErrorInputMessage message={errors.desc} /> : null}
+            </View>
+            <View className="mt-4">
+              <Text className="text-gray-500">Jumlah Barang Yang Dibutuhkan</Text>
+              <TextInput
+                onChangeText={handleChange('required_amount')}
+                value={values.required_amount}
+                keyboardType="numeric"
+                className="border-b border-gray-500" placeholder="Masukkan jumlah barang yang dibutuhkan" />
+              {errors.required_amount && touched.required_amount ? <ErrorInputMessage message={errors.required_amount} /> : null}
+            </View>
+            <View className="mt-4">
+              <Text className="text-gray-500">Kriteria Barang</Text>
+              <TextInput
+                onChangeText={handleChange('goods_criteria')}
+                value={values.goods_criteria}
+                className="border-b border-gray-500" placeholder="Masukkan kriteria barang" />
+              {errors.goods_criteria && touched.goods_criteria ? <ErrorInputMessage message={errors.goods_criteria} /> : null}
             </View>
             <TouchableOpacity
               onPress={handleSubmit}
