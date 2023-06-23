@@ -1,4 +1,5 @@
-import { Image, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 function BadgeStatusOngoing({ status }) {
   return (
@@ -17,8 +18,12 @@ function BadgeStatusEnded({ status }) {
 }
 
 export default function DonationCardFullWidth({ item }) {
+  const router = useRouter();
+
   return (
-    <View className="justify-between" >
+    <TouchableOpacity
+      onPress={() => router.push({ pathname: 'detail_donation', params: { donationId: item.id } })}
+      className="justify-between" >
       <View className="relative">
         <Image source={{ uri: item.cover }} className="w-full h-[120px] rounded-lg" style={{ resizeMode: 'cover' }} />
         <Text className="text-sm mt-1 text-primary-500 font-bold">{item.title}</Text>
@@ -27,6 +32,6 @@ export default function DonationCardFullWidth({ item }) {
       <View className="w-[30%] bg-primary-500 px-2 py-1 mt-2 rounded">
         <Text className="text-xs text-center font-semibold text-secondary-500">Terkumpul: {item.current_amount}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }

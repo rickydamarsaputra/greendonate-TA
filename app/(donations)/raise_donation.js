@@ -93,10 +93,12 @@ export default function raiseDonation() {
         contentContainerStyle={{ gap: 20 }}
       >
         {donations?.map((item) => (
-          <View key={item.id} className="bg-white shadow shadow-black/50 rounded-lg" >
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: 'detail_donation', params: { donationId: item.id } })}
+            key={item.id} className="bg-white shadow shadow-black/50 rounded-lg" >
             <Image source={{ uri: item.cover }} className="w-full h-[120px] rounded-tl-lg rounded-tr-lg" style={{ resizeMode: 'cover' }} />
             <Text className="text-sm p-2 text-primary-500 font-bold">{item.title}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
       {/* LIST DONATION */}

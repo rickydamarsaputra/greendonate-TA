@@ -63,9 +63,8 @@ export default function orgRegister() {
   };
 
   return (
-    <View className="flex-1 px-4">
+    <View className="flex-1 px-4 my-5">
       <Stack.Screen options={{ headerTitle: 'Daftarkan Organisasi Anda' }} />
-      <Text className="text-xl font-bold text-gray-800 mt-5">Mulai donasi untuk kurangi limbah dengan Zero Waste</Text>
       <Formik
         validationSchema={OrgRegisterYupSchema}
         initialValues={{

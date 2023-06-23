@@ -18,9 +18,10 @@ export default function detailOrganization() {
       if (getOrganization.error) return console.log(getOrganization.error);
 
       const getDonations = await supabase.from('donation_posts')
-        .select().eq('organization_id', organizationId);
+        .select().eq('organization_id', organizationId)
+        .limit(4)
+        .order('created_at', { ascending: false });
       if (getDonations.error) return console.log(getDonations.error);
-      console.log(getDonations);
 
       setOrganization({ ...getOrganization.data });
       setDonations([...getDonations.data.map((res) => ({
@@ -55,10 +56,10 @@ export default function detailOrganization() {
         <Text className="text-sm text-justify text-gray-500 mt-4">
           {organization?.desc}
         </Text>
-        <Text className="text-lg text-primary-500 font-bold my-4">
+        <Text className="text-lg text-primary-500 font-bold mt-4">
           Informasi Organisasi
         </Text>
-        <View className="flex-row items-center space-x-2 mb-1">
+        <View className="flex-row items-center space-x-2 my-2">
           <View className="w-[25px] h-[25px] justify-center items-center rounded-full bg-primary-500">
             <FontAwesome name="map-marker" size={14} color="white" />
           </View>
@@ -66,7 +67,7 @@ export default function detailOrganization() {
             {organization?.address}
           </Text>
         </View>
-        <View className="flex-row items-center space-x-2 mb-1">
+        <View className="flex-row items-center space-x-2 mb-2">
           <View className="w-[25px] h-[25px] justify-center items-center rounded-full bg-primary-500">
             <Entypo name="old-phone" size={14} color="white" />
           </View>
