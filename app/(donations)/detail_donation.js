@@ -1,8 +1,9 @@
 import { Entypo, FontAwesome, MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Tabs, useLocalSearchParams, useRouter } from 'expo-router';
+import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { DonationCard } from '../../components';
+import { DonationCard, StoryCard } from '../../components';
 import supabase from '../../lib/supabase';
 
 function BadgeStatusOngoing({ status }) {
@@ -26,6 +27,23 @@ export default function detailDonation() {
   const { donationId } = useLocalSearchParams();
   const [user, setUser] = useState(null);
   const [donation, setDonation] = useState(null);
+  const [donations, setDonations] = useState([]);
+  const [stories, setStories] = useState([]);
+
+  const couriers = [
+    {
+      code: 'sicepat',
+      title: 'SiCepat',
+    },
+    {
+      code: 'jne',
+      title: 'JNE Express',
+    },
+    {
+      code: 'jet',
+      title: 'JET Express',
+    },
+  ];
 
   useEffect(() => {
     async function getUser() {
@@ -57,11 +75,58 @@ export default function detailDonation() {
         `).eq('id', donationId).single();
       if (getDonation.error) return console.log(getDonation.error);
 
+      const { data, error } = await supabase.from('donations')
+        .select(`
+        id,
+        post_id,
+        delivery_img,
+        awb,
+        courier,
+        created_at,
+        donation_posts (name)
+        `).eq('post_id', getDonation.data.id)
+        .order('created_at', { ascending: false });
+      if (error) return console.log(error.message);
+
+
       setDonation({ ...getDonation.data });
+      setDonations([...data.map((res) => ({
+        id: res.id,
+        cover: res.delivery_img,
+        title: res.awb,
+        courier: res.courier,
+        donation_to: getDonation.data.name,
+        created_at: moment(res.created_at).fromNow(),
+      }))]);
+    }
+
+    async function getStories() {
+      const { data, error } = await supabase.from('donations')
+        .select(`
+        id, 
+        user_id, 
+        post_id, 
+        desc, 
+        is_show_name,
+        created_at,
+        users (id, fullname)
+        `).eq('post_id', donationId)
+        .limit(4)
+        .order('created_at', { ascending: false });
+      if (error) return console.log(error.message);
+
+      setStories([...data.map((res) => ({
+        id: res.id,
+        content: res.desc,
+        is_show_name: res.is_show_name,
+        author: res.users.fullname,
+        created_at: moment(res.created_at).fromNow(),
+      }))]);
     }
 
     getUser();
     getDonation();
+    getStories();
   }, []);
 
   return (
@@ -90,10 +155,12 @@ export default function detailDonation() {
           </View>
         </View>
         <View className="relative mb-4">
-          <View className="w-full h-[10px] bg-gray-300 rounded"></View>
+          <View className="w-full h-[20px] bg-gray-300 rounded"></View>
           <View
             style={{ width: `${(donation?.current_amount / donation?.required_amount) * 100}%` }}
-            className="h-[10px] absolute bg-primary-500 rounded"></View>
+            className="h-[20px] absolute bg-primary-500 rounded">
+            <Text className="text-xs text-white font-semibold text-center mt-[1px]">{(donation?.current_amount / donation?.required_amount) * 100}%</Text>
+          </View>
         </View>
         <Text className="text-sm text-justify text-gray-500">
           {donation?.desc}
@@ -131,6 +198,59 @@ export default function detailDonation() {
         <Text className="text-sm text-justify text-gray-500">
           {donation?.goods_criteria}
         </Text>
+
+        {/* LIST STORY */}
+        <View className="flex-row items-center justify-between mt-10">
+          <Text className="text-lg text-primary-500 font-bold">Cerita Kawan Hijau</Text>
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: 'stories' })}
+          >
+            <Text className="text-xs text-gray-500">Lihat Lainnya</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView
+          className="mt-2 mb-5"
+          showsHorizontalScrollIndicator={false}
+        >
+          <View style={{
+            flex: 1,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }}>
+            {stories?.map((item) => <StoryCard key={item.id} item={item} />)}
+          </View>
+        </ScrollView>
+        {/* LIST STORY */}
+
+        {user?.role == 'organization' && (
+          <>
+            {/* LIST DONATION */}
+            <View className="flex-row items-center justify-between mt-10">
+              <Text className="text-lg text-primary-500 font-bold">Kumpulan Donasi</Text>
+            </View>
+            <ScrollView
+              className="mt-2"
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 20 }}
+            >
+              {donations?.map((item) => (
+                <TouchableOpacity
+                  onPress={() => router.push({ pathname: 'tracking_donation', params: { donationId: item.id } })}
+                  key={item.id} className="bg-white shadow shadow-black/50 rounded-lg" >
+                  <Image source={{ uri: item.cover }} className="w-full h-[120px] rounded-tl-lg rounded-tr-lg" style={{ resizeMode: 'cover' }} />
+                  <Text className="text-sm p-2 text-primary-500 font-bold">
+                    {item.title} - {couriers.filter((courier) => courier.code == item.courier)[0].title}
+                  </Text>
+                  <Text className="text-xs px-2 pb-2 text-gray-500 font-semibold">
+                    {item.created_at}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            {/* LIST DONATION */}
+          </>
+        )}
 
         {user?.role == 'donatur' && (
           <TouchableOpacity

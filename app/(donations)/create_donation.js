@@ -107,6 +107,7 @@ export default function createDonation() {
                 onChangeText={handleChange('desc')}
                 value={values.desc}
                 style={{ height: 100, textAlignVertical: 'top' }}
+                numberOfLines={10}
                 multiline={true}
                 className="border-b border-gray-500 mt-1" placeholder="Masukkan deskripsi" />
               {errors.desc && touched.desc ? <ErrorInputMessage message={errors.desc} /> : null}

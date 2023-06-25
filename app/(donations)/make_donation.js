@@ -2,7 +2,7 @@ import { Octicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
-import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Formik } from 'formik';
 import OrgRegisterYupSchema from '../../schema/OrgRegisterYupSchema';
 import ErrorInputMessage from '../../components/ErrorInputMessage';
@@ -10,6 +10,7 @@ import supabase from '../../lib/supabase';
 import slug from 'slug';
 import { decode } from 'base64-arraybuffer';
 import UserMakeDonationYupSchema from '../../schema/UserMakeDonationYupSchema';
+import { BINDERBYTE_API_KEY } from "@env";
 
 export default function makeDonation() {
   const router = useRouter();
@@ -40,14 +41,47 @@ export default function makeDonation() {
       is_active: false,
     },
     {
-      code: 'anteraja',
-      title: 'AnterAja',
+      code: 'jet',
+      title: 'JET Express',
       is_active: false,
     },
   ]);
 
   const handleUserMakeDonation = async (values) => {
-    console.log(showName, courier, values);
+    const checkValidAwb = await fetch(`https://api.binderbyte.com/v1/track?api_key=${BINDERBYTE_API_KEY}&courier=${courier}&awb=${values.resi}`)
+      .then(res => res.json());
+    if (checkValidAwb.status != 200) {
+      Alert.alert('kurir/resi yang anda masukkan tidak valid!');
+      return console.log(checkValidAwb.message);
+    }
+
+    const storage = await supabase.storage.from('public').upload(`donation_delivery/${slug(values.resi, '_')}.png`, decode(image.base64), {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: 'image/png',
+    });
+    if (storage.error) return console.log(storage.error);
+
+    const storageGetUrl = await supabase.storage.from('public').getPublicUrl(storage.data.path);
+    if (storageGetUrl.error) return console.log(storageGetUrl.error);
+
+    const currentUserLogin = await supabase.auth.getUser();
+    if (currentUserLogin.error) return console.log(currentUserLogin.error);
+
+    const createDonation = await supabase.from('donations').insert({
+      user_id: currentUserLogin.data.user.id,
+      post_id: donationPostId,
+      delivery_img: storageGetUrl.data.publicUrl,
+      awb: values.resi,
+      courier: courier,
+      desc: values.desc,
+      is_show_name: showName,
+      status: 'pending',
+    }).select().single();
+    if (createDonation.error) return console.log(createDonation.error);
+
+    router.push({ pathname: 'main' });
+    // console.log(showName, courier, values, donationPostId);
   }
 
   const pickImage = async () => {
@@ -76,6 +110,7 @@ export default function makeDonation() {
         enableReinitialize={true}
         initialValues={{
           resi: '',
+          desc: '',
         }}
         onSubmit={handleUserMakeDonation}
       >
@@ -146,6 +181,17 @@ export default function makeDonation() {
                 value={values.resi}
                 className="border-b border-gray-500" placeholder="Masukkan resi pengiriman" />
               {errors.resi && touched.resi ? <ErrorInputMessage message={errors.resi} /> : null}
+            </View>
+            <View className="mt-4">
+              <Text className="text-gray-500">Tuliskan doa dan berikan dukungan</Text>
+              <TextInput
+                onChangeText={handleChange('desc')}
+                value={values.desc}
+                style={{ height: 100, textAlignVertical: 'top' }}
+                numberOfLines={10}
+                multiline={true}
+                className="border-b border-gray-500 mt-1" placeholder="Tuliskan doa untuk penggalang donasi atau dirimu sendiri disini, Biarkan doa kamu bisa dilihat dan memberikan semangat ke #kawanhijau lainya." />
+              {errors.desc && touched.desc ? <ErrorInputMessage message={errors.desc} /> : null}
             </View>
             <TouchableOpacity
               onPress={handleSubmit}
