@@ -1,22 +1,15 @@
 import { View, Text, Dimensions } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 
-export default function ChartKit() {
+export default function ChartKit({ dataChart }) {
   return (
     <View>
       <LineChart
         data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
+          labels: dataChart?.map((donation) => donation.month),
           datasets: [
             {
-              data: [
-                Math.round(Math.random() * 100),
-                Math.round(Math.random() * 100),
-                Math.round(Math.random() * 100),
-                Math.round(Math.random() * 100),
-                Math.round(Math.random() * 100),
-                Math.round(Math.random() * 100)
-              ]
+              data: dataChart?.map((donation) => parseInt(donation.amount)),
             }
           ]
         }}
