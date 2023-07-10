@@ -19,6 +19,7 @@ export default function detailOrganization() {
 
       const getDonations = await supabase.from('donation_posts')
         .select().eq('organization_id', organizationId)
+        .in('status', ['active', 'not_active'])
         .limit(4)
         .order('created_at', { ascending: false });
       if (getDonations.error) return console.log(getDonations.error);

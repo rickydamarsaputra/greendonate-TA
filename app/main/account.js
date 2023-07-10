@@ -51,7 +51,7 @@ export default function account() {
         >
           <View className="flex-row space-x-2 items-center">
             <FontAwesome name="gear" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Pengaturan</Text>
+            <Text className="font-medium text-gray-500">Ubah Data Pengguna</Text>
           </View>
           <AntDesign name="right" size={18} color="#4C5155" />
         </TouchableOpacity>
@@ -65,7 +65,7 @@ export default function account() {
           >
             <View className="flex-row space-x-2 items-center">
               <Octicons name="organization" size={24} color="#4C5155" style={{ width: 30 }} />
-              <Text className="font-medium text-gray-500">Pengaturan Organisasi</Text>
+              <Text className="font-medium text-gray-500">Ubah Data Organisasi</Text>
             </View>
             <AntDesign name="right" size={18} color="#4C5155" />
           </TouchableOpacity>
@@ -86,17 +86,18 @@ export default function account() {
         )}
         {/* GREENDONATE STATISTICS */}
 
-        {/* MANAGE USERS */}
+        {/* MANAGE ORGANIZATION DONATION */}
         {user?.role == 'admin' && (
-          <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
+          <TouchableOpacity className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+            onPress={() => router.push({ pathname: 'manage_donation' })}>
             <View className="flex-row space-x-2 items-center">
-              <FontAwesome5 name="users-cog" size={24} color="#4C5155" style={{ width: 30 }} />
-              <Text className="font-medium text-gray-500">Kelola Pengguna</Text>
+              <MaterialCommunityIcons name="hand-coin" size={24} color="#4C5155" style={{ width: 30 }} />
+              <Text className="font-medium text-gray-500">Kelola Donasi Organisasi</Text>
             </View>
             <AntDesign name="right" size={18} color="#4C5155" />
           </TouchableOpacity>
         )}
-        {/* MANAGE USERS */}
+        {/* MANAGE ORGANIZATION DONATION */}
 
         {/* RAISE DONATIONS */}
         {user?.role == 'organization' && (
@@ -113,19 +114,6 @@ export default function account() {
         )}
         {/* RAISE DONATIONS */}
 
-        {/* ABOUT */}
-        <TouchableOpacity
-          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
-          onPress={() => router.push({ pathname: 'about' })}
-        >
-          <View className="flex-row space-x-2 items-center">
-            <FontAwesome5 name="donate" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Tentang GreenDonate</Text>
-          </View>
-          <AntDesign name="right" size={18} color="#4C5155" />
-        </TouchableOpacity>
-        {/* ABOUT */}
-
         {/* TERMS AND CONDITIONS */}
         <TouchableOpacity
           className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
@@ -138,6 +126,19 @@ export default function account() {
           <AntDesign name="right" size={18} color="#4C5155" />
         </TouchableOpacity>
         {/* TERMS AND CONDITIONS */}
+
+        {/* ABOUT */}
+        <TouchableOpacity
+          className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3"
+          onPress={() => router.push({ pathname: 'about' })}
+        >
+          <View className="flex-row space-x-2 items-center">
+            <FontAwesome5 name="donate" size={24} color="#4C5155" style={{ width: 30 }} />
+            <Text className="font-medium text-gray-500">Tentang GreenDonate</Text>
+          </View>
+          <AntDesign name="right" size={18} color="#4C5155" />
+        </TouchableOpacity>
+        {/* ABOUT */}
 
         {/* LOG OUT */}
         <TouchableOpacity

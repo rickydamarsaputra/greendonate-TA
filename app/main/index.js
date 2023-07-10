@@ -107,6 +107,7 @@ export default function main() {
     async function getDonations() {
       const { data, error } = await supabase.from('donation_posts')
         .select(`id, name, banner_img, current_amount, status`)
+        .in('status', ['active', 'not_active'])
         .limit(4)
         .order('created_at', { ascending: false });
       if (error) return console.log(error.message);

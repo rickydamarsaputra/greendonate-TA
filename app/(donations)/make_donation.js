@@ -1,16 +1,15 @@
 import { Octicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Formik } from 'formik';
-import OrgRegisterYupSchema from '../../schema/OrgRegisterYupSchema';
 import ErrorInputMessage from '../../components/ErrorInputMessage';
 import supabase from '../../lib/supabase';
 import slug from 'slug';
 import { decode } from 'base64-arraybuffer';
 import UserMakeDonationYupSchema from '../../schema/UserMakeDonationYupSchema';
 import { BINDERBYTE_API_KEY } from "@env";
+import { useState } from 'react';
 
 export default function makeDonation() {
   const router = useRouter();
@@ -41,8 +40,8 @@ export default function makeDonation() {
       is_active: false,
     },
     {
-      code: 'jet',
-      title: 'JET Express',
+      code: 'anteraja',
+      title: 'AnterAja',
       is_active: false,
     },
   ]);
@@ -89,7 +88,7 @@ export default function makeDonation() {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      // allowsEditing: true,
       quality: 1,
       allowsMultipleSelection: false,
     });

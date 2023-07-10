@@ -58,7 +58,7 @@ export default function setting() {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      // allowsEditing: true,
       quality: 1,
       allowsMultipleSelection: false,
     });
@@ -95,7 +95,7 @@ export default function setting() {
 
   return (
     <View className="flex-1 px-4">
-      <Stack.Screen options={{ headerTitle: 'Pengaturan' }} />
+      <Stack.Screen options={{ headerTitle: 'Ubah Data Pengguna' }} />
       <Formik
         enableReinitialize={true}
         validationSchema={UpdateUserYupSchema}

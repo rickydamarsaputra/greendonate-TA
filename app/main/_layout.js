@@ -103,7 +103,7 @@ export default () => {
       <Tabs.Screen name="inbox"
         options={{
           headerLeft: null,
-          tabBarLabel: 'Inbox',
+          tabBarLabel: 'Pesan',
           tabBarIcon: ({ color }) => (
             <Octicons name="bell" size={24} color={color} />
           ),

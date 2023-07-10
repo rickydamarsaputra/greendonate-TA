@@ -19,8 +19,8 @@ export default function myDonation() {
       title: 'JNE Express',
     },
     {
-      code: 'jet',
-      title: 'JET Express',
+      code: 'anteraja',
+      title: 'AnterAja',
     },
   ];
 

@@ -40,8 +40,8 @@ export default function detailDonation() {
       title: 'JNE Express',
     },
     {
-      code: 'jet',
-      title: 'JET Express',
+      code: 'anteraja',
+      title: 'AnterAja',
     },
   ];
 
@@ -128,6 +128,24 @@ export default function detailDonation() {
     getDonation();
     getStories();
   }, []);
+
+  const handleAcceptProgramDonation = async () => {
+    const { data, error } = await supabase.from('donation_posts')
+      .update({ status: 'active' }).eq('id', donationId).select();
+    if (error) return console.log(error);
+
+    console.log(data);
+    return router.back();
+  }
+
+  const handleRejectProgramDonation = async () => {
+    const { data, error } = await supabase.from('donation_posts')
+      .update({ status: 'reject' }).eq('id', donationId).select();
+    if (error) return console.log(error);
+
+    console.log(data);
+    return router.back();
+  }
 
   return (
     <View className="relative flex-1 bg-gray-100 px-4">
@@ -252,12 +270,27 @@ export default function detailDonation() {
           </>
         )}
 
-        {user?.role == 'donatur' && (
+        {(user?.role == 'donatur' && donation?.status == 'active') && (
           <TouchableOpacity
             onPress={() => router.push({ pathname: 'make_donation', params: { donationPostId: donation.id } })}
             className="w-full py-4 mt-10 rounded-md bg-primary-600">
             <Text className="text-md text-white text-center font-semibold">Donasi sekarang</Text>
           </TouchableOpacity>
+        )}
+
+        {(user?.role == 'admin' && donation?.status == 'pending') && (
+          <View className="flex-row space-x-2">
+            <TouchableOpacity
+              onPress={() => handleAcceptProgramDonation()}
+              className="flex-1 py-4 mt-10 rounded-md bg-primary-600">
+              <Text className="text-md text-white text-center font-semibold">Terima postingan</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleRejectProgramDonation()}
+              className="flex-1 py-4 mt-10 rounded-md bg-red-600">
+              <Text className="text-md text-white text-center font-semibold">Tolak postingan</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
     </View>

@@ -1,11 +1,26 @@
-import { Tabs } from 'expo-router';
+import { Entypo } from '@expo/vector-icons';
+import { Tabs, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { DonationCardFullWidth } from '../../components';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import supabase from '../../lib/supabase';
 
-export default function donation() {
+export default function manageDonation() {
+  const router = useRouter();
   const [donations, setDonations] = useState([]);
+  const status = {
+    pending: {
+      text: 'Menunggu Validasi Admin',
+      color: '#eab308'
+    },
+    active: {
+      text: 'Berlangsung',
+      color: '#22c55e'
+    },
+    not_active: {
+      text: 'Berakhir',
+      color: '#ef4444'
+    },
+  }
   // const donations = [
   //   {
   //     id: 1,
@@ -52,30 +67,36 @@ export default function donation() {
   // ];
 
   useEffect(() => {
-    async function getDonations() {
+    async function getDonationPost() {
+      const currentUserLogin = await supabase.auth.getUser();
+      if (currentUserLogin.error) return console.log(currentUserLogin.error);
+
+      const user = await supabase.from('users')
+        .select()
+        .eq('id', currentUserLogin.data.user.id)
+        .single();
+      if (user.error) return console.log(user.error);
+
       const { data, error } = await supabase.from('donation_posts')
-        .select(`id, name, banner_img, current_amount, status`)
-        .in('status', ['active', 'not_active'])
-        .order('created_at', { ascending: false });
-      if (error) return console.log(error.message);
+        .select().eq('status', 'pending').order('created_at', { ascending: false });
+      if (error) return console.log(error);
 
       setDonations([...data.map((res) => ({
         id: res.id,
         title: res.name,
-        current_amount: res.current_amount,
         cover: res.banner_img,
-        status: res.status
+        status: res.status,
       }))]);
     }
 
-    getDonations();
+    getDonationPost();
   }, []);
 
   return (
     <View className="relative flex-1 bg-gray-100 px-4">
       <Tabs.Screen
         options={{
-          headerTitle: 'Mulai Berbagi Kebaikan',
+          headerTitle: 'Kelola Donasi Organisasi',
         }}
       />
 
@@ -85,7 +106,18 @@ export default function donation() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ gap: 20 }}
       >
-        {donations.map((item) => <DonationCardFullWidth key={item.id} item={item} />)}
+        {donations?.map((item) => (
+          <TouchableOpacity
+            onPress={() => router.push({ pathname: 'detail_donation', params: { donationId: item.id } })}
+            key={item.id} className="bg-white shadow shadow-black/50 rounded-lg" >
+            <Image source={{ uri: item.cover }} className="w-full h-[120px] rounded-tl-lg rounded-tr-lg" style={{ resizeMode: 'cover' }} />
+            <Text className="text-sm p-2 text-primary-500 font-bold">{item.title}</Text>
+            <Text className="relative text-center text-xs mx-2 mb-2 p-1 text-white font-medium rounded-md"
+              style={{ backgroundColor: status[item.status].color }}>
+              {status[item.status].text}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
       {/* LIST DONATION */}
     </View>

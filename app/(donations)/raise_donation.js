@@ -7,6 +7,24 @@ import supabase from '../../lib/supabase';
 export default function raiseDonation() {
   const router = useRouter();
   const [donations, setDonations] = useState([]);
+  const status = {
+    pending: {
+      text: 'Program donasi menunggu validasi',
+      color: '#eab308'
+    },
+    active: {
+      text: 'Program donasi berlangsung',
+      color: '#22c55e'
+    },
+    not_active: {
+      text: 'Program donasi berakhir',
+      color: '#ef4444'
+    },
+    reject: {
+      text: 'Program donasi di tolak',
+      color: '#b91c1c'
+    },
+  }
   // const donations = [
   //   {
   //     id: 1,
@@ -72,6 +90,7 @@ export default function raiseDonation() {
         id: res.id,
         title: res.name,
         cover: res.banner_img,
+        status: res.status,
       }))]);
     }
 
@@ -98,6 +117,10 @@ export default function raiseDonation() {
             key={item.id} className="bg-white shadow shadow-black/50 rounded-lg" >
             <Image source={{ uri: item.cover }} className="w-full h-[120px] rounded-tl-lg rounded-tr-lg" style={{ resizeMode: 'cover' }} />
             <Text className="text-sm p-2 text-primary-500 font-bold">{item.title}</Text>
+            <Text className="relative text-center text-xs mx-2 mb-2 p-1 text-white font-medium rounded-md"
+              style={{ backgroundColor: status[item.status].color }}>
+              {status[item.status].text}
+            </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

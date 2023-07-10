@@ -1,7 +1,9 @@
-import { Octicons } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, Octicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Formik } from 'formik';
 import ErrorInputMessage from '../../components/ErrorInputMessage';
@@ -9,10 +11,15 @@ import supabase from '../../lib/supabase';
 import slug from 'slug';
 import { decode } from 'base64-arraybuffer';
 import CreateDonationPostYupSchema from '../../schema/CreateDonationPostYupSchema';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 
 export default function createDonation() {
   const router = useRouter();
   const [image, setImage] = useState(null);
+  const [datePicker, setDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
+  // const [proposal, setProposal] = useState(null);
 
   const handleCreateDonationPost = async (values) => {
     const storage = await supabase.storage.from('public').upload(`donation_banner/${slug(values.name, '_')}.png`, decode(image.base64), {
@@ -41,6 +48,8 @@ export default function createDonation() {
       required_amount: values.required_amount,
       goods_criteria: values.goods_criteria,
       banner_img: storageGetUrl.data.publicUrl,
+      status: 'pending',
+      ended_at: date,
     });
     if (donationPost.error) return console.log(donationPost.error);
 
@@ -52,7 +61,7 @@ export default function createDonation() {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      // allowsEditing: true,
       quality: 1,
       allowsMultipleSelection: false,
     });
@@ -65,10 +74,29 @@ export default function createDonation() {
     }
   };
 
+  // const pickProposal = async () => {
+  //   // No permissions request is necessary for launching the image library
+  //   let result = await DocumentPicker.getDocumentAsync({
+  //     copyToCacheDirectory: false
+  //   });
+
+  //   if (result.type != 'cancel') {
+  //     const base64File = await FileSystem.readAsStringAsync(result.uri, { encoding: 'base64' });
+  //     console.log(base64File);
+
+  //     setProposal({
+  //       filename: result.name,
+  //       uri: result.uri,
+  //       base64: base64File
+  //     });
+  //   }
+  // };
+
   return (
-    <View className="flex-1 px-4">
+    <View className="flex-1 px-4 mb-5">
       <Stack.Screen options={{ headerTitle: 'Buat Donasi' }} />
       <Formik
+        enableReinitialize={true}
         validationSchema={CreateDonationPostYupSchema}
         initialValues={{
           name: '',
@@ -94,41 +122,82 @@ export default function createDonation() {
               </TouchableOpacity>
             </View>
             <View className="mt-4">
-              <Text className="text-gray-500">Nama</Text>
+              <Text className="text-gray-500">Nama Program Donasi</Text>
               <TextInput
                 onChangeText={handleChange('name')}
                 value={values.name}
-                className="border-b border-gray-500" placeholder="Masukkan nama" />
+                className="border-b border-gray-500" placeholder="Masukkan nama program donasi" />
               {errors.name && touched.name ? <ErrorInputMessage message={errors.name} /> : null}
             </View>
             <View className="mt-4">
-              <Text className="text-gray-500">Deskripsi</Text>
+              <Text className="text-gray-500">Deskripsi Program Donasi</Text>
               <TextInput
                 onChangeText={handleChange('desc')}
                 value={values.desc}
                 style={{ height: 100, textAlignVertical: 'top' }}
                 numberOfLines={10}
                 multiline={true}
-                className="border-b border-gray-500 mt-1" placeholder="Masukkan deskripsi" />
+                className="border-b border-gray-500 mt-1" placeholder="Masukkan deskripsi program donasi" />
               {errors.desc && touched.desc ? <ErrorInputMessage message={errors.desc} /> : null}
             </View>
             <View className="mt-4">
-              <Text className="text-gray-500">Jumlah Barang Yang Dibutuhkan</Text>
+              <Text className="text-gray-500">Jumlah Barang</Text>
               <TextInput
                 onChangeText={handleChange('required_amount')}
                 value={values.required_amount}
                 keyboardType="numeric"
-                className="border-b border-gray-500" placeholder="Masukkan jumlah barang yang dibutuhkan" />
+                numberOfLines={2}
+                multiline={true}
+                className="border-b border-gray-500 py-1" placeholder="Masukkan jumlah barang yang dibutuhkan dalam program donasi" />
               {errors.required_amount && touched.required_amount ? <ErrorInputMessage message={errors.required_amount} /> : null}
             </View>
             <View className="mt-4">
-              <Text className="text-gray-500">Kriteria Barang</Text>
+              <Text className="text-gray-500">Kriteria Barang Donasi</Text>
               <TextInput
                 onChangeText={handleChange('goods_criteria')}
                 value={values.goods_criteria}
-                className="border-b border-gray-500" placeholder="Masukkan kriteria barang" />
+                style={{ height: 100, textAlignVertical: 'top' }}
+                numberOfLines={10}
+                multiline={true}
+                className="border-b border-gray-500" placeholder="Masukkan kriteria barang donasi" />
               {errors.goods_criteria && touched.goods_criteria ? <ErrorInputMessage message={errors.goods_criteria} /> : null}
             </View>
+            <View className="mt-4">
+              <Text className="text-gray-500">Tanggal Program Donasi Berakhir</Text>
+              <View className="flex-row items-center space-x-2 mt-2">
+                <TouchableOpacity
+                  onPress={() => setDatePicker(true)}
+                  className="w-[40px] h-[40px] justify-center items-center rounded-full bg-primary-500"
+                >
+                  <FontAwesome name="calendar-o" size={21} color="white" />
+                </TouchableOpacity>
+                <Text className="text-gray-800">{moment(date).format('D/M/Y')}</Text>
+                {datePicker && (
+                  <DateTimePicker
+                    value={date}
+                    mode={'date'}
+                    is24Hour={true}
+                    minimumDate={new Date()}
+                    onChange={(event, value) => {
+                      setDate(value);
+                      setDatePicker(false);
+                    }}
+                  />
+                )}
+              </View>
+            </View>
+            {/* <View className="mt-4">
+              <Text className="text-gray-500">Upload Proposal Program Donasi</Text>
+              <View className="flex-row items-center space-x-2 mt-2">
+                <TouchableOpacity
+                  className="w-[40px] h-[40px] justify-center items-center rounded-full bg-primary-500"
+                  onPress={pickProposal}
+                >
+                  <AntDesign name="addfile" size={21} color="white" />
+                </TouchableOpacity>
+                <Text className="text-gray-800">{proposal?.filename}</Text>
+              </View>
+            </View> */}
             <TouchableOpacity
               onPress={handleSubmit}
               className="py-4 rounded-md bg-primary-600 mt-10">

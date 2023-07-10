@@ -29,6 +29,15 @@ export default () => {
       }}
     >
       <Stack.Screen name="main" options={{ headerShown: false }} />
+
+      {/* NOTIFICATION ROUTE */}
+      <Stack.Screen
+        name="notification"
+        options={{
+          // Set the presentation mode to modal for our modal route.
+          presentation: 'modal',
+        }}
+      />
     </Stack>
   );
 };

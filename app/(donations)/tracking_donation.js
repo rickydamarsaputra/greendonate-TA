@@ -14,6 +14,7 @@ export default function trackingDonation() {
   const { donationId } = useLocalSearchParams();
   const [user, setUser] = useState(null);
   const [donation, setDonation] = useState(null);
+  const [donationPost, setDonationPost] = useState(null);
   const [timeline, setTimeline] = useState([]);
   const [tracking, setTracking] = useState(null);
 
@@ -27,8 +28,8 @@ export default function trackingDonation() {
       title: 'JNE Express',
     },
     {
-      code: 'jet',
-      title: 'JET Express',
+      code: 'anteraja',
+      title: 'AnterAja',
     },
   ];
 
@@ -36,6 +37,10 @@ export default function trackingDonation() {
     const { data, error } = await supabase.from('donations')
       .update({ status: 'accept' }).eq('id', donationId).select();
     if (error) return console.log(error);
+
+    const updateCurrentAmountDonationPost = await supabase.from('donation_posts')
+      .update({ current_amount: (donationPost.current_amount + 1) }).eq('id', donationPost.id).select();
+    if (updateCurrentAmountDonationPost.error) return console.log(updateCurrentAmountDonationPost.error);
 
     console.log(data);
     return router.back();
@@ -69,6 +74,7 @@ export default function trackingDonation() {
       const { data, error } = await supabase.from('donations')
         .select(`
         delivery_img,
+        post_id,
         awb,
         courier,
         desc,
@@ -79,11 +85,15 @@ export default function trackingDonation() {
         `).eq('id', donationId).single();
       if (error) return console.log(error);
 
+      const donationPost = await supabase.from('donation_posts').select().eq('id', data.post_id).single();
+      if (donationPost.error) return console.log(donationPost.error);
+
       const response = await fetch(`https://api.binderbyte.com/v1/track?api_key=${BINDERBYTE_API_KEY}&courier=${data?.courier}&awb=${data?.awb}`)
         .then(res => res.json());
       if (response.status != 200) return console.log(response.message);
 
       setDonation(data);
+      setDonationPost(donationPost.data);
       setTimeline([...response.data.history.map((res, index) => ({
         title: res.date,
         description: res.desc,

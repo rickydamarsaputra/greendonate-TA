@@ -67,7 +67,7 @@ export default function orgSetting() {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      // allowsEditing: true,
       quality: 1,
       allowsMultipleSelection: false,
     });
@@ -110,7 +110,7 @@ export default function orgSetting() {
 
   return (
     <View className="flex-1 px-4">
-      <Stack.Screen options={{ headerTitle: 'Pengaturan Organisasi' }} />
+      <Stack.Screen options={{ headerTitle: 'Ubah Data Organisasi' }} />
       <Formik
         enableReinitialize={true}
         validationSchema={OrgRegisterYupSchema}

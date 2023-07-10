@@ -49,7 +49,7 @@ export default function orgRegister() {
     let result = await ImagePicker.launchImageLibraryAsync({
       base64: true,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
+      // allowsEditing: true,
       quality: 1,
       allowsMultipleSelection: false,
     });
