@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
@@ -69,7 +69,7 @@ export default function myDonation() {
   //   }
   // ];
 
-  useEffect(() => {
+  useFocusEffect(() => {
     async function getUser() {
       const currentUserLogin = await supabase.auth.getUser();
       if (currentUserLogin.error) return router.replace({ pathname: '/' });
@@ -113,7 +113,7 @@ export default function myDonation() {
 
     getUser();
     getUserDonations();
-  }, []);
+  });
 
   return (
     <View className="flex-1 bg-white px-4">

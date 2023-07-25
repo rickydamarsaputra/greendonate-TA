@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import supabase from '../../lib/supabase';
@@ -8,7 +8,34 @@ export default function inbox() {
   const router = useRouter();
   const [notification, setNotification] = useState([]);
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   async function getNotification() {
+  //     const currentUserLogin = await supabase.auth.getUser();
+  //     if (currentUserLogin.error) return router.replace({ pathname: '/' });
+
+  //     const user = await supabase.from('users')
+  //       .select()
+  //       .eq('id', currentUserLogin.data.user.id)
+  //       .single();
+  //     if (user.error) return console.log(user.error);
+
+  //     const { data, error } = await supabase.from('notifications')
+  //       .select()
+  //       .eq('user_id', user.data.id);
+  //     if (error) return console.log(error.message);
+
+  //     setNotification([...data.map((res) => ({
+  //       id: res.id,
+  //       message: res.message
+  //     }))]);
+
+  //     // console.log(data);
+  //   }
+
+  //   getNotification();
+  // }, [notification]);
+
+  useFocusEffect(() => {
     async function getNotification() {
       const currentUserLogin = await supabase.auth.getUser();
       if (currentUserLogin.error) return router.replace({ pathname: '/' });
@@ -33,7 +60,7 @@ export default function inbox() {
     }
 
     getNotification();
-  }, [notification]);
+  });
 
   return (
     <View className="flex-1 bg-gray-100 px-4">

@@ -41,7 +41,7 @@ export default function index() {
 				}}
 				renderItem={({ item }) => (
 					<ImageBackground source={item.image} className="relative flex-1 items-center justify-between w-screen">
-						<Text className="text-4xl font-bold text-primary-600 mt-20 z-50">GreenDonate</Text>
+						<Text className="text-4xl font-bold text-white/80 mt-20 z-50">GreenDonate</Text>
 						<View className="w-[90%] mb-10 z-50">
 							<Text className="text-lg text-white text-center font-semibold">{item.title}</Text>
 							<Text className="text-md text-white/80 text-center mt-2">{item.subtitle}</Text>

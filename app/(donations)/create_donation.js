@@ -41,6 +41,9 @@ export default function createDonation() {
       .single();
     if (user.error) return console.log(user.error);
 
+    const admin = await supabase.from('users').select().eq('role', 'admin').single();
+    if (admin.error) return console.log(admin.error);
+
     const donationPost = await supabase.from('donation_posts').insert({
       organization_id: user.data.organization_id,
       name: values.name,
@@ -53,6 +56,21 @@ export default function createDonation() {
     });
     if (donationPost.error) return console.log(donationPost.error);
 
+    const notification = await supabase.from('notifications').insert({
+      user_id: user.data.id,
+      role: user.data.role,
+      message: 'Berhasil membuat postingan donasi, menunggu validasi admin'
+    }).single();
+    if (notification.error) return console.log(notification.error);
+
+    const notificationToAdmin = await supabase.from('notifications').insert({
+      user_id: admin.data.id,
+      role: admin.data.role,
+      message: 'Postingan donasi baru, menunggu validasi'
+    }).single();
+    if (notificationToAdmin.error) return console.log(notificationToAdmin.error);
+
+    console.log(notification.data);
     router.push({ pathname: 'raise_donation' });
   }
 

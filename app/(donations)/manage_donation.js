@@ -1,5 +1,5 @@
 import { Entypo } from '@expo/vector-icons';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import supabase from '../../lib/supabase';
@@ -66,7 +66,7 @@ export default function manageDonation() {
   //   }
   // ];
 
-  useEffect(() => {
+  useFocusEffect(() => {
     async function getDonationPost() {
       const currentUserLogin = await supabase.auth.getUser();
       if (currentUserLogin.error) return console.log(currentUserLogin.error);
@@ -90,7 +90,7 @@ export default function manageDonation() {
     }
 
     getDonationPost();
-  }, []);
+  });
 
   return (
     <View className="relative flex-1 bg-gray-100 px-4">

@@ -175,9 +175,11 @@ export default function detailDonation() {
         <View className="relative mb-4">
           <View className="w-full h-[20px] bg-gray-300 rounded"></View>
           <View
-            style={{ width: `${(donation?.current_amount / donation?.required_amount) * 100}%` }}
+            style={{ width: `${Math.round((donation?.current_amount / donation?.required_amount) * 100)}%` }}
             className="h-[20px] absolute bg-primary-500 rounded">
-            <Text className="text-xs text-white font-semibold text-center mt-[1px]">{(donation?.current_amount / donation?.required_amount) * 100}%</Text>
+            <Text className="text-xs text-white font-semibold text-center mt-[1px]">
+              {Math.round((donation?.current_amount / donation?.required_amount) * 100)}%
+            </Text>
           </View>
         </View>
         <Text className="text-sm text-justify text-gray-500">

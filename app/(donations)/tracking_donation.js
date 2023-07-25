@@ -92,6 +92,8 @@ export default function trackingDonation() {
         .then(res => res.json());
       if (response.status != 200) return console.log(response.message);
 
+      console.log(data);
+
       setDonation(data);
       setDonationPost(donationPost.data);
       setTimeline([...response.data.history.map((res, index) => ({

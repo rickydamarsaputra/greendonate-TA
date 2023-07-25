@@ -1,4 +1,4 @@
-import { Link, Tabs, useRouter } from 'expo-router';
+import { Link, Tabs, useFocusEffect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { DonationCard, OrgCard, StoryCard } from '../../components';
@@ -134,16 +134,22 @@ export default function main() {
       }))]);
     }
 
+    getOrganization();
+    getDonations();
+    getUser();
+  }, []);
+
+  useFocusEffect(() => {
     async function getStories() {
       const { data, error } = await supabase.from('donations')
         .select(`
-        id, 
-        user_id, 
-        desc, 
-        is_show_name,
-        created_at,
-        users (id, fullname)
-        `)
+      id, 
+      user_id, 
+      desc, 
+      is_show_name,
+      created_at,
+      users (id, fullname)
+      `)
         .limit(4)
         .order('created_at', { ascending: false });
       if (error) return console.log(error.message);
@@ -157,11 +163,8 @@ export default function main() {
       }))]);
     }
 
-    getUser();
-    getOrganization();
-    getDonations();
     getStories();
-  }, []);
+  });
 
   return (
     <View className="flex-1 bg-gray-100">

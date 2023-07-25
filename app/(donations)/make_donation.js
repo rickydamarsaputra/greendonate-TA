@@ -54,7 +54,7 @@ export default function makeDonation() {
       return console.log(checkValidAwb.message);
     }
 
-    const storage = await supabase.storage.from('public').upload(`donation_delivery/${slug(values.resi, '_')}.png`, decode(image.base64), {
+    const storage = await supabase.storage.from('public').upload(`donation_delivery/${slug(values.resi, '_')}_${(Math.random() * 1000)}.png`, decode(image.base64), {
       cacheControl: '3600',
       upsert: false,
       contentType: 'image/png',

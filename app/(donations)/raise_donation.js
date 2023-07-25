@@ -1,5 +1,5 @@
 import { Entypo } from '@expo/vector-icons';
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs, useFocusEffect, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import supabase from '../../lib/supabase';
@@ -70,7 +70,34 @@ export default function raiseDonation() {
   //   }
   // ];
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   async function getDonationPost() {
+  //     const currentUserLogin = await supabase.auth.getUser();
+  //     if (currentUserLogin.error) return console.log(currentUserLogin.error);
+
+  //     const user = await supabase.from('users')
+  //       .select()
+  //       .eq('id', currentUserLogin.data.user.id)
+  //       .single();
+  //     if (user.error) return console.log(user.error);
+
+  //     const { data, error } = await supabase.from('donation_posts')
+  //       .select()
+  //       .eq('organization_id', user.data.organization_id).order('created_at', { ascending: false });
+  //     if (error) return console.log(error);
+
+  //     setDonations([...data.map((res) => ({
+  //       id: res.id,
+  //       title: res.name,
+  //       cover: res.banner_img,
+  //       status: res.status,
+  //     }))]);
+  //   }
+
+  //   getDonationPost();
+  // }, []);
+
+  useFocusEffect(() => {
     async function getDonationPost() {
       const currentUserLogin = await supabase.auth.getUser();
       if (currentUserLogin.error) return console.log(currentUserLogin.error);
@@ -95,7 +122,7 @@ export default function raiseDonation() {
     }
 
     getDonationPost();
-  }, []);
+  });
 
   return (
     <View className="relative flex-1 bg-gray-100 px-4">
