@@ -12,6 +12,20 @@ export default function login() {
   const { enterAs } = useLocalSearchParams();
   const [securePassword, setSecurePassword] = useState(true);
 
+  const generateNumber = (n) => {
+    let add = 1;
+    let max = 12 - add;
+
+    if (n > max) {
+      return generate(max) + generate(n - max);
+    }
+
+    max = Math.pow(10, n + add);
+    let min = max / 10;
+    let number = Math.floor(Math.random() * (max - min + 1)) + min;
+    return ("" + number).substring(add);
+  }
+
   const handleLogin = async (values) => {
     const userLogin = await supabase.auth.signInWithPassword({
       email: values.email,
@@ -19,7 +33,7 @@ export default function login() {
     });
     if (userLogin.error) return Alert.alert(userLogin.error.message);
 
-    router.replace({ pathname: 'main' });
+    router.replace({ pathname: 'otp', params: { otpCode: generateNumber(6) } });
   }
 
   return (

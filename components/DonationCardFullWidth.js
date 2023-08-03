@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import moment from 'moment';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 function BadgeStatusOngoing({ status }) {
@@ -29,9 +30,14 @@ export default function DonationCardFullWidth({ item }) {
         <Text className="text-sm mt-1 text-primary-500 font-bold">{item.title}</Text>
         {item.status == 'active' ? <BadgeStatusOngoing status={item.status} /> : <BadgeStatusEnded status={item.status} />}
       </View>
-      <View className="w-[30%] bg-primary-500 px-2 py-1 mt-2 rounded">
-        <Text className="text-xs text-center font-semibold text-secondary-500">Terkumpul: {item.current_amount}</Text>
+      <View className="bg-primary-500 px-2 py-1 mt-2 rounded">
+        <Text className="text-xs text-center font-semibold text-secondary-500">
+          Berakhir pada {moment(item.ended_at).format('LL')}
+        </Text>
       </View>
+      {/* <View className="w-[30%] bg-primary-500 px-2 py-1 mt-2 rounded">
+        <Text className="text-xs text-center font-semibold text-secondary-500">Terkumpul: {item.current_amount}</Text>
+      </View> */}
     </TouchableOpacity>
   );
 }

@@ -48,10 +48,10 @@ export default function createDonation() {
       organization_id: user.data.organization_id,
       name: values.name,
       desc: values.desc,
-      required_amount: values.required_amount,
+      // required_amount: values.required_amount,
       goods_criteria: values.goods_criteria,
       banner_img: storageGetUrl.data.publicUrl,
-      status: 'pending',
+      status: 'Menunggu Validasi Organisasi',
       ended_at: date,
     });
     if (donationPost.error) return console.log(donationPost.error);
@@ -59,7 +59,7 @@ export default function createDonation() {
     const notification = await supabase.from('notifications').insert({
       user_id: user.data.id,
       role: user.data.role,
-      message: 'Berhasil membuat postingan donasi, menunggu validasi admin'
+      message: `Berhasil membuat postingan donasi ${values.name}, menunggu validasi admin`
     }).single();
     if (notification.error) return console.log(notification.error);
 
@@ -119,7 +119,7 @@ export default function createDonation() {
         initialValues={{
           name: '',
           desc: '',
-          required_amount: '',
+          // required_amount: '',
           goods_criteria: '',
         }}
         onSubmit={handleCreateDonationPost}
@@ -158,7 +158,7 @@ export default function createDonation() {
                 className="border-b border-gray-500 mt-1" placeholder="Masukkan deskripsi program donasi" />
               {errors.desc && touched.desc ? <ErrorInputMessage message={errors.desc} /> : null}
             </View>
-            <View className="mt-4">
+            {/* <View className="mt-4">
               <Text className="text-gray-500">Jumlah Barang</Text>
               <TextInput
                 onChangeText={handleChange('required_amount')}
@@ -168,7 +168,7 @@ export default function createDonation() {
                 multiline={true}
                 className="border-b border-gray-500 py-1" placeholder="Masukkan jumlah barang yang dibutuhkan dalam program donasi" />
               {errors.required_amount && touched.required_amount ? <ErrorInputMessage message={errors.required_amount} /> : null}
-            </View>
+            </View> */}
             <View className="mt-4">
               <Text className="text-gray-500">Kriteria Barang Donasi</Text>
               <TextInput

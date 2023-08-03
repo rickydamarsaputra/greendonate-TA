@@ -48,7 +48,8 @@ export default function inbox() {
 
       const { data, error } = await supabase.from('notifications')
         .select()
-        .eq('user_id', user.data.id);
+        .eq('user_id', user.data.id)
+        .order('created_at', { ascending: false });
       if (error) return console.log(error.message);
 
       setNotification([...data.map((res) => ({
@@ -76,7 +77,7 @@ export default function inbox() {
           <TouchableOpacity
             onPress={() => router.push({ pathname: 'notification', params: { message: item.message } })}
             key={item.id} className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3">
-            <Text className="font-medium text-gray-500">{item.message}</Text>
+            <Text className="font-medium text-gray-500" numberOfLines={1}>{item.message}</Text>
             <AntDesign name="right" size={18} color="#4C5155" />
           </TouchableOpacity>
         ))}

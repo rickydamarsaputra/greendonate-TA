@@ -67,6 +67,12 @@ export default function makeDonation() {
     const currentUserLogin = await supabase.auth.getUser();
     if (currentUserLogin.error) return console.log(currentUserLogin.error);
 
+    const user = await supabase.from('users')
+      .select()
+      .eq('id', currentUserLogin.data.user.id)
+      .single();
+    if (user.error) return console.log(user.error);
+
     const createDonation = await supabase.from('donations').insert({
       user_id: currentUserLogin.data.user.id,
       post_id: donationPostId,
@@ -78,6 +84,41 @@ export default function makeDonation() {
       status: 'pending',
     }).select().single();
     if (createDonation.error) return console.log(createDonation.error);
+
+    const getDonation = await supabase.from('donation_posts')
+      .select(`
+      id,
+      name,
+      desc,
+      required_amount,
+      current_amount,
+      banner_img,
+      goods_criteria,
+      status,
+      ended_at,
+      organizations (id, name, address, contact)
+    `).eq('id', donationPostId).single();
+    if (getDonation.error) return console.log(getDonation.error);
+
+    const userOrg = await supabase.from('users')
+      .select()
+      .eq('organization_id', getDonation.data.organizations.id)
+      .single();
+    if (userOrg.error) return console.log(userOrg.error);
+
+    const notificationToOrganization = await supabase.from('notifications').insert({
+      user_id: userOrg.data.id,
+      role: userOrg.data.role,
+      message: `Donasi baru dari ${user.data.fullname}, menunggu validasi`
+    }).single();
+    if (notificationToOrganization.error) return console.log(notificationToOrganization.error);
+
+    const notificationToDonatur = await supabase.from('notifications').insert({
+      user_id: user.data.id,
+      role: user.data.role,
+      message: 'Berhasil melakukan donasi, menunggu validasi organisasi untuk pengiriman barang'
+    }).single();
+    if (notificationToDonatur.error) return console.log(notificationToDonatur.error);
 
     router.push({ pathname: 'main' });
     // console.log(showName, courier, values, donationPostId);

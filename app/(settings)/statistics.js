@@ -1,10 +1,11 @@
 import { Tabs } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Text, ScrollView, View } from 'react-native';
+import { Text, ScrollView, View, TouchableOpacity } from 'react-native';
 import { ChartKit } from '../../components';
 import supabase from '../../lib/supabase';
 import moment from 'moment/moment';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { AntDesign } from '@expo/vector-icons';
 
 export default function statistics() {
   const [openYearFilter, setOpenYearFilter] = useState(false);
@@ -132,20 +133,20 @@ export default function statistics() {
       const { data, error } = await supabase.rpc('count_donations_at_month_and_group_by_with_year', { year: currentYear });
       if (error) return console.log(error.message);
 
-      setDonationsChartData([...data]);
-      console.log(data);
+      setDonationsChartData([...donationsChartData.map(obj => data.find(o => o.month === obj.month) || obj)]);
+      console.log(donationsChartData.map(obj => data.find(o => o.month === obj.month) || obj));
     }
 
-    async function getUsersChartData() {
-      const { data, error } = await supabase.rpc('count_users_at_month_and_group_by_with_year', { year: currentYear });
-      if (error) return console.log(error.message);
+    // async function getUsersChartData() {
+    //   const { data, error } = await supabase.rpc('count_users_at_month_and_group_by_with_year', { year: currentYear });
+    //   if (error) return console.log(error.message);
 
-      setUsersChartData([...data]);
-      console.log(data);
-    }
+    //   setUsersChartData([...data]);
+    //   console.log(data);
+    // }
 
     getDonationsChartData();
-    getUsersChartData();
+    // getUsersChartData();
   }, [currentYear]);
 
   // useEffect(() => {
@@ -176,13 +177,28 @@ export default function statistics() {
       </View>
 
       <View className="mt-4">
+        <Text className="text-lg text-primary-500 font-bold mb-2">
+          Statistika Donasi Perbulan Pada Tahun {currentYear}
+        </Text>
+
+        {donationsChartData.map((data, index) => (
+          <TouchableOpacity
+            key={index} className="flex-row items-center justify-between bg-white rounded-lg shadow shadow-black/50 p-3 mb-4">
+            <Text className="font-medium text-gray-500" numberOfLines={1}>
+              {currentYear} {data.month} {data.amount} donasi
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* <View className="mt-4">
         <Text className="text-lg text-primary-500 font-bold mb-2">Donasi Bulanan</Text>
         <ChartKit dataChart={donationsChartData} />
-      </View>
-      <View className="mt-4">
+      </View> */}
+      {/* <View className="mt-4">
         <Text className="text-lg text-primary-500 font-bold mb-2">Pengguna Bulanan</Text>
         <ChartKit dataChart={usersChartData} />
-      </View>
+      </View> */}
     </ScrollView>
   );
 }

@@ -35,12 +35,19 @@ export default function trackingDonation() {
 
   const handleAcceptDonation = async () => {
     const { data, error } = await supabase.from('donations')
-      .update({ status: 'accept' }).eq('id', donationId).select();
+      .update({ status: 'Di Terima' }).eq('id', donationId).select();
     if (error) return console.log(error);
 
     const updateCurrentAmountDonationPost = await supabase.from('donation_posts')
       .update({ current_amount: (donationPost.current_amount + 1) }).eq('id', donationPost.id).select();
     if (updateCurrentAmountDonationPost.error) return console.log(updateCurrentAmountDonationPost.error);
+
+    const notificationToDonatur = await supabase.from('notifications').insert({
+      user_id: donation.users.id,
+      role: donation.users.role,
+      message: 'Donasi anda di terima organisasi, silahkan lanjutkan untuk pengiriman donasi ke organisasi'
+    }).single();
+    if (notificationToDonatur.error) return console.log(notificationToDonatur.error);
 
     console.log(data);
     return router.back();
@@ -48,8 +55,15 @@ export default function trackingDonation() {
 
   const handleRejectDonation = async () => {
     const { data, error } = await supabase.from('donations')
-      .update({ status: 'reject' }).eq('id', donationId).select();
+      .update({ status: 'Di Tolak' }).eq('id', donationId).select();
     if (error) return console.log(error);
+
+    const notificationToDonatur = await supabase.from('notifications').insert({
+      user_id: donation.users.id,
+      role: donation.users.role,
+      message: 'Donasi anda di tolak organisasi, dikarnakan belum memenuhi persyaratan keriteria barang donasi'
+    }).single();
+    if (notificationToDonatur.error) return console.log(notificationToDonatur.error);
 
     console.log(data);
     return router.back();
@@ -74,6 +88,7 @@ export default function trackingDonation() {
       const { data, error } = await supabase.from('donations')
         .select(`
         delivery_img,
+        user_id,
         post_id,
         awb,
         courier,
@@ -81,9 +96,11 @@ export default function trackingDonation() {
         is_show_name,
         status,
         created_at,
+        users(id, role),
         donation_posts(name, organizations(name))
         `).eq('id', donationId).single();
       if (error) return console.log(error);
+      console.log(data);
 
       const donationPost = await supabase.from('donation_posts').select().eq('id', data.post_id).single();
       if (donationPost.error) return console.log(donationPost.error);
@@ -219,7 +236,7 @@ export default function trackingDonation() {
           lineColor='#cbd5e1'
         />
 
-        {(user?.role == 'organization' && tracking?.summary?.status == 'DELIVERED' && donation?.status == 'pending') && (
+        {(user?.role == 'organization' && tracking?.summary?.status == 'DELIVERED' && donation?.status == 'Menunggu Validasi Organisasi') && (
           <View className="flex-row space-x-2">
             <TouchableOpacity
               onPress={() => handleAcceptDonation()}

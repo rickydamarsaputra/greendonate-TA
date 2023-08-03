@@ -71,6 +71,7 @@ export default function detailDonation() {
         banner_img,
         goods_criteria,
         status,
+        ended_at,
         organizations (id, name, address, contact)
         `).eq('id', donationId).single();
       if (getDonation.error) return console.log(getDonation.error);
@@ -165,14 +166,21 @@ export default function detailDonation() {
           {donation?.status == 'active' ? <BadgeStatusOngoing status={donation?.status} /> : <BadgeStatusEnded status={donation?.status} />}
         </View>
         <View className="flex-row space-x-2 mb-4">
+          <View className="flex-1 bg-primary-500 px-2 py-2 rounded">
+            <Text className="text-xs font-semibold text-secondary-500">
+              Berakhir pada {moment(donation?.ended_at).format('LL')}
+            </Text>
+          </View>
+        </View>
+        {/* <View className="flex-row space-x-2 mb-4">
           <View className="flex-1 bg-secondary-500 px-2 py-2 rounded">
             <Text className="text-xs text-center font-semibold text-primary-500">Dibutuhkan: {donation?.required_amount}</Text>
           </View>
           <View className="flex-1 bg-primary-500 px-2 py-2 rounded">
             <Text className="text-xs text-center font-semibold text-secondary-500">Terkumpul: {donation?.current_amount}</Text>
           </View>
-        </View>
-        <View className="relative mb-4">
+        </View> */}
+        {/* <View className="relative mb-4">
           <View className="w-full h-[20px] bg-gray-300 rounded"></View>
           <View
             style={{ width: `${Math.round((donation?.current_amount / donation?.required_amount) * 100)}%` }}
@@ -181,7 +189,10 @@ export default function detailDonation() {
               {Math.round((donation?.current_amount / donation?.required_amount) * 100)}%
             </Text>
           </View>
-        </View>
+        </View> */}
+        <Text className="text-lg text-primary-500 font-bold">
+          Deskripsi Program Donasi
+        </Text>
         <Text className="text-sm text-justify text-gray-500">
           {donation?.desc}
         </Text>

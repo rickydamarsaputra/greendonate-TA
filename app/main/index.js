@@ -98,6 +98,7 @@ export default function main() {
       if (error) return console.log(error);
 
       setUser({
+        organizationId: data.organization_id,
         fullname: data.fullname,
         role: data.role,
         avatar_img: data.avatar_img,
@@ -105,20 +106,44 @@ export default function main() {
     }
 
     async function getDonations() {
-      const { data, error } = await supabase.from('donation_posts')
-        .select(`id, name, banner_img, current_amount, status`)
-        .in('status', ['active', 'not_active'])
-        .limit(4)
-        .order('created_at', { ascending: false });
-      if (error) return console.log(error.message);
+      const currentUserLogin = await supabase.auth.getUser();
+      if (currentUserLogin.error) return router.replace({ pathname: '/' });
 
-      setDonations([...data.map((res) => ({
-        id: res.id,
-        title: res.name,
-        current_amount: res.current_amount,
-        cover: res.banner_img,
-        status: res.status
-      }))]);
+      const currentUser = await supabase.from('users').select('*').eq('id', currentUserLogin.data.user.id).single();
+      if (currentUser.error) return console.log(currentUser.error);
+
+      if (currentUser.data.role == 'organization') {
+        const { data, error } = await supabase.from('donation_posts')
+          .select(`id, name, banner_img, current_amount, status, ended_at`)
+          .in('status', ['active', 'not_active'])
+          .eq('organization_id', currentUser.data.organization_id)
+          .limit(4)
+          .order('created_at', { ascending: false });
+        if (error) return console.log(error.message);
+
+        setDonations([...data.map((res) => ({
+          id: res.id,
+          title: res.name,
+          current_amount: res.current_amount,
+          cover: res.banner_img,
+          status: res.status
+        }))]);
+      } else {
+        const { data, error } = await supabase.from('donation_posts')
+          .select(`id, name, banner_img, current_amount, status, ended_at`)
+          .in('status', ['active', 'not_active'])
+          .limit(4)
+          .order('created_at', { ascending: false });
+        if (error) return console.log(error.message);
+
+        setDonations([...data.map((res) => ({
+          id: res.id,
+          title: res.name,
+          current_amount: res.current_amount,
+          cover: res.banner_img,
+          status: res.status
+        }))]);
+      }
     }
 
     async function getOrganization() {
@@ -134,9 +159,9 @@ export default function main() {
       }))]);
     }
 
+    getUser();
     getOrganization();
     getDonations();
-    getUser();
   }, []);
 
   useFocusEffect(() => {
