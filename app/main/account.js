@@ -134,7 +134,7 @@ export default function account() {
         >
           <View className="flex-row space-x-2 items-center">
             <FontAwesome5 name="donate" size={24} color="#4C5155" style={{ width: 30 }} />
-            <Text className="font-medium text-gray-500">Tentang GreenDonate</Text>
+            <Text className="font-medium text-gray-500">Tentang Greendonate</Text>
           </View>
           <AntDesign name="right" size={18} color="#4C5155" />
         </TouchableOpacity>

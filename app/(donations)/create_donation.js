@@ -51,7 +51,7 @@ export default function createDonation() {
       // required_amount: values.required_amount,
       goods_criteria: values.goods_criteria,
       banner_img: storageGetUrl.data.publicUrl,
-      status: 'Menunggu Validasi Organisasi',
+      status: 'pending',
       ended_at: date,
     });
     if (donationPost.error) return console.log(donationPost.error);

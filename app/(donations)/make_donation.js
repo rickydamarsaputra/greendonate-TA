@@ -81,7 +81,7 @@ export default function makeDonation() {
       courier: courier,
       desc: values.desc,
       is_show_name: showName,
-      status: 'pending',
+      status: 'Menunggu Validasi Organisasi',
     }).select().single();
     if (createDonation.error) return console.log(createDonation.error);
 
